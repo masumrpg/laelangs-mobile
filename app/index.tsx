@@ -26,11 +26,11 @@ export default function Index() {
     }
 
     // FIXME please delete this
-    let accessToken = authData?.access_token;
+    let accessToken = authData?.accessToken;
 
     return isOnboardingComplete ? (
         // authData?.access_token
-        !accessToken
+        accessToken
             ? <Redirect href="/(tabs)/home" /> :
             <Redirect href="/auth/login" />) : <Redirect href="/onboarding" />;
 }

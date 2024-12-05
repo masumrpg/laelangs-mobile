@@ -1,17 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
-
-type AuthData = {
-    access_token: string;
-    refresh_token: string;
-    user_id: string;
-    merchant_id: string;
-};
+import { AuthSchema } from "~/feature/auth/schema";
 
 type AuthContextType = {
-    authData: AuthData | null;
+    authData: AuthSchema | null;
     isAuthenticated: boolean;
-    login: (data: AuthData) => Promise<void>;
+    login: (data: AuthSchema) => Promise<void>;
     logout: () => Promise<void>;
     loading: boolean;
 };
@@ -19,7 +13,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [authData, setAuthData] = useState<AuthData | null>(null);
+    const [authData, setAuthData] = useState<AuthSchema | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -35,7 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loadAuthData();
     }, []);
 
-    const login = async (data: AuthData) => {
+    const login = async (data: AuthSchema) => {
         await SecureStore.setItemAsync("authData", JSON.stringify(data));
         setAuthData(data);
     };

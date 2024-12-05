@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React from "react";
+import { View, Text } from "react-native";
 import { useAuth } from "~/contex/AuthContex";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import { router, useRouter } from "expo-router";
+import { Link, router, useRouter } from "expo-router";
 import { Controller } from "react-hook-form";
 import { Separator } from "~/components/ui/separator";
-import BlobBackground from "~/components/BlobBackground";
 import { useZodForm } from "~/shared/hooks/useZodForm";
 import { LoginSchema, loginSchema } from "~/feature/login/schema";
 import { type AuthSchema } from "~/feature/auth/schema";
+import { H1 } from "~/components/ui/typography";
 
 export default function Login() {
     const router = useRouter();
@@ -52,7 +52,11 @@ export default function Login() {
     return (
         <View className="flex-1 items-center justify-center gap-y-10 px-10">
             {/*<BlobBackground />*/}
-            <Text className="font-bold text-4xl text-primary">Login</Text>
+            <Text>
+                <H1 className="text-primary">
+                    Login
+                </H1>
+            </Text>
             <View className="w-11/12 max-w-400 gap-y-8">
                 <View className="gap-y-5">
                     <Controller
@@ -105,9 +109,9 @@ export default function Login() {
                 </View>
                 <Text className="text-gray-500 text-base text-center">
                     Belum punya akun?{" "}
-                    <TouchableOpacity onPress={() => router.push("/auth/register")}>
+                    <Link href={"/auth/register"}>
                         <Text className="text-primary font-bold">Register</Text>
-                    </TouchableOpacity>
+                    </Link>
                 </Text>
             </View>
         </View>

@@ -5,15 +5,7 @@ module.exports = {
     rules: {
         "quotes": ["error", "double", { "avoidEscape": true }],
         "semi": ["error", "always"],
-        "func-style": ["error", "declaration", { "allowArrowFunctions": false }],
-        "no-restricted-exports": ["error", {
-            "restrictDefaultExports": {
-                "defaultPropsLast": true,
-                "namedExport": true,
-            },
-        }],
-
-        "import/prefer-default-export": "off",
+        "import/no-extraneous-dependencies": false,
     },
     settings: {
         react: {

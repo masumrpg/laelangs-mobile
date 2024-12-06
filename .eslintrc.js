@@ -5,12 +5,16 @@ module.exports = {
     rules: {
         "quotes": ["error", "double", { "avoidEscape": true }],
         "semi": ["error", "always"],
-        "import/no-extraneous-dependencies": false,
     },
     settings: {
         react: {
             version: "detect",
         },
     },
-    ignorePatterns: ["/dist/*"],
+    ignorePatterns: [
+        "node_modules/",
+        "dist/",
+        "build/",
+    ],
+
 };

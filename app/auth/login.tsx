@@ -1,15 +1,14 @@
 import React from "react";
-import { View, Text } from "react-native";
-import { useAuth } from "~/contex/AuthContex";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Link, router, useRouter } from "expo-router";
-import { Controller } from "react-hook-form";
-import { Separator } from "~/components/ui/separator";
-import { useZodForm } from "~/shared/hooks/useZodForm";
-import { LoginSchema, loginSchema } from "~/feature/login/schema";
-import { type AuthSchema } from "~/feature/auth/schema";
-import { H1 } from "~/components/ui/typography";
+import { Text } from "react-native";
+import { Link, useRouter } from "expo-router";
+import { Path } from "react-hook-form";
+import { useZodForm } from "@/shared/hooks/useZodForm";
+import { LoginSchema, loginSchema } from "@/feature/login/schema";
+import FormInput from "@/components/FormInput";
+import { Heading } from "@/components/ui/heading";
+import { useAuth } from "@/contex/AuthContex";
+import { AuthSchema } from "@/feature/auth/schema";
+import { Box } from "@/components/ui/box";
 
 export default function Login() {
     const router = useRouter();
@@ -27,12 +26,15 @@ export default function Login() {
 
             await login({ accessToken, refreshToken, userId, merchantId });
 
-            alert("Login successful!");
+            console.log(data);
             router.replace("/home");
         } catch (error) {
             alert("Login failed. Please try again.");
+            console.log(error);
         }
     };
+
+    const fields = Object.keys(loginSchema._def.shape()) as Path<LoginSchema>[];
 
     const fakeLoginRequest = async (credentials: LoginSchema): Promise<AuthSchema> => {
         return new Promise((resolve) =>
@@ -49,71 +51,19 @@ export default function Login() {
         );
     };
 
-    return (
-        <View className="flex-1 items-center justify-center gap-y-10 px-10">
-            {/*<BlobBackground />*/}
-            <Text>
-                <H1 className="text-primary">
-                    Login
-                </H1>
-            </Text>
-            <View className="w-11/12 max-w-400 gap-y-8">
-                <View className="gap-y-5">
-                    <Controller
-                        name="username"
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                            <>
-                                <Input
-                                    placeholder="Username"
-                                    value={field.value}
-                                    onChangeText={field.onChange}
-                                    aria-labelledby="username"
-                                    aria-errormessage="inputError"
-                                />
-                                {fieldState.error && (
-                                    <Text className="text-red-500">{fieldState.error.message}</Text>
-                                )}
-                            </>
-                        )}
-                    />
-                    <Controller
-                        name="password"
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                            <>
-                                <Input
-                                    placeholder="Password"
-                                    value={field.value}
-                                    onChangeText={field.onChange}
-                                    aria-labelledby="password"
-                                    aria-errormessage="inputError"
-                                    secureTextEntry
-                                />
-                                {fieldState.error && (
-                                    <Text className="text-red-500">{fieldState.error.message}</Text>
-                                )}
-                            </>
-                        )}
-                    />
-                </View>
 
-                <View className="gap-y-4">
-                    <Button onPress={form.handleSubmit(handleLogin)}>
-                        <Text className="text-white font-bold text-base text-center">Login</Text>
-                    </Button>
-                    <Separator />
-                    <Button variant="outline">
-                        <Text>Google</Text>
-                    </Button>
-                </View>
-                <Text className="text-gray-500 text-base text-center">
-                    Belum punya akun?{" "}
-                    <Link href={"/auth/register"}>
-                        <Text className="text-primary font-bold">Register</Text>
-                    </Link>
-                </Text>
-            </View>
-        </View>
+    return (
+        <Box className="flex-1 items-center justify-center gap-y-10 px-10">
+            {/*<BlobBackground />*/}
+            <Heading className="text-primary-0 text-3xl font-bold">Login</Heading>
+            <FormInput className={"w-11/12 max-w-400 gap-y-5"} fields={fields} form={form} onSubmit={handleLogin}
+                       buttonName="Login" />
+            <Text className="text-gray-500 text-base text-center">
+                Belum punya akun?{" "}
+                <Link href={"/auth/register"}>
+                    <Text className="text-primary-0 font-bold">Register</Text>
+                </Link>
+            </Text>
+        </Box>
     );
 }

@@ -1,7 +1,7 @@
 import LottieView from "lottie-react-native";
-import auction from "~/assets/lottie/auction.json";
-import secure from "~/assets/lottie/secure.json";
-import fast from "~/assets/lottie/fast-delivery.json";
+import auction from "@/assets/lottie/auction.json";
+import secure from "@/assets/lottie/secure.json";
+import fast from "@/assets/lottie/fast-delivery.json";
 
 const onboardingData = () => {
     return [
@@ -10,7 +10,7 @@ const onboardingData = () => {
             image: (
                 <LottieView style={{ width: 300, height: 300 }} source={auction} autoPlay loop />
             ),
-            title: "Welcome to AuctionEase",
+            title: "Welcome to Laelangs",
             subtitle: "Discover, bid, and win your dream items at the best prices.",
         },
         {

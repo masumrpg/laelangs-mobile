@@ -1,30 +1,29 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Onboarding from "react-native-onboarding-swiper";
-import onboardingData from "~/shared/constant/onboardingData";
-import { Button } from "~/components/ui/button";
+import onboardingData from "@/shared/constant/onboardingData";
+import { Box } from "@/components/ui/box";
+import { Text } from "@/components/ui/text";
 
 
 export default function Index() {
     const router = useRouter();
 
     const finishOnboarding = async () => {
-        // FIXME aktifkan ini jangan lupa
         await AsyncStorage.setItem("onboardingComplete", "true");
         router.replace("/auth/login");
     };
 
     return (
-        <View className="flex-1">
+        <Box className="flex-1">
             <Onboarding
                 onSkip={finishOnboarding}
                 bottomBarHighlight={false}
                 DoneButtonComponent={() => <TouchableOpacity
                     onPress={finishOnboarding}
                 >
-                    <Text
-                        className="text-lg mr-5">Done
+                    <Text className="text-lg mr-5">Done
                     </Text>
                 </TouchableOpacity>
                 }
@@ -32,6 +31,6 @@ export default function Index() {
                 bottomBarHeight={100}
                 pages={onboardingData()}
             />
-        </View>
+        </Box>
     );
 }

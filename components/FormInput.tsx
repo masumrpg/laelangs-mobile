@@ -1,4 +1,4 @@
-import React, { ElementType } from "react";
+import React, { ElementType, useEffect } from "react";
 import { View } from "react-native";
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
@@ -17,6 +17,7 @@ interface FormInputProps<T extends FieldValues> {
     iconAfter?: ElementType;
     onChangeValue?: (value: string) => void;
     className?: string;
+    inputClassName?: string;
 }
 
 export default function FormInput<T extends FieldValues>({
@@ -28,6 +29,7 @@ export default function FormInput<T extends FieldValues>({
                                                              iconAfter,
                                                              onChangeValue,
                                                              className,
+                                                             inputClassName,
                                                          }: FormInputProps<T>) {
     return (
         <View className={cn(
@@ -46,7 +48,10 @@ export default function FormInput<T extends FieldValues>({
                                 </Text>
                             )}
                             <Input
-                                className={"h-15"}
+                                className={cn(
+                                    inputClassName,
+                                    "h-15",
+                                )}
                                 variant="outline"
                                 size="sm"
                                 isInvalid={!!fieldState.error}
@@ -91,7 +96,11 @@ export default function FormInput<T extends FieldValues>({
             ))}
             {buttonName && onSubmit && (
                 <Button
-                    className="mt-3"
+                    disabled={form.formState.disabled}
+                    className={cn(
+                        form.formState.disabled ? "bg-primary-100" : "",
+                        "mt-3",
+                    )}
                     onPress={form.handleSubmit(onSubmit)}
                 >
                     <Text className="text-white font-bold text-center text-lg">{buttonName}</Text>

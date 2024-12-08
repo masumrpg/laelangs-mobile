@@ -17,7 +17,6 @@ interface FormInputProps<T extends FieldValues> {
     iconAfter?: ElementType;
     onChangeValue?: (value: string) => void;
     className?: string;
-    inputClassName?: string;
 }
 
 export default function FormInput<T extends FieldValues>({
@@ -29,7 +28,6 @@ export default function FormInput<T extends FieldValues>({
                                                              iconAfter,
                                                              onChangeValue,
                                                              className,
-                                                             inputClassName,
                                                          }: FormInputProps<T>) {
     return (
         <View className={cn(
@@ -43,17 +41,13 @@ export default function FormInput<T extends FieldValues>({
                     render={({ field: { onChange, value }, fieldState }) => (
                         <Box className={"gap-y-2"}>
                             {buttonName && (
-                                <Text size={"lg"} className="font-semibold text-primary-0">
+                                <Text size={"lg"} className="font-semibold text-primary-500">
                                     {formatCamelCaseToTitle(field)}
                                 </Text>
                             )}
                             <Input
-                                className={cn(
-                                    inputClassName,
-                                    "h-15",
-                                )}
                                 variant="outline"
-                                size="sm"
+                                size="lg"
                                 isInvalid={!!fieldState.error}
                             >
                                 {

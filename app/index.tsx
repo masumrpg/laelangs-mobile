@@ -2,7 +2,7 @@ import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, View } from "react-native";
-import { useAuth } from "@/contex/AuthContex";
+import { useAuth } from "@/shared/contex/AuthContex";
 
 export default function Index() {
     const { authData } = useAuth();

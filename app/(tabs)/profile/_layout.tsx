@@ -1,13 +1,12 @@
 import { Stack } from "expo-router";
-import HomeSearch from "@/feature/home/components/home-search";
+import HomeSearch from "@/feature/home/components/HomeSearch";
 
-export default function HomeLayout() {
+export default function ProfileLayout() {
     return (
-        <Stack>
-            <Stack.Screen
-                name="index"
-                options={{ headerTitle: () => <HomeSearch /> }}
-            />
-        </Stack>
+        <Stack
+            screenOptions={{
+                headerShown: false,
+            }}
+        />
     );
 }

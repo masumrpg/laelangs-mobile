@@ -6,7 +6,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
-import { AuthProvider } from "@/contex/AuthContex";
+import { AuthProvider } from "@/shared/contex/AuthContex";
 import { StatusBar } from "expo-status-bar";
 import { ThemeProviderRoot, useTheme } from "@/components/ui/theme-provider/ThemeProviderRoot";
 import { ThemeProvider } from "@react-navigation/core";

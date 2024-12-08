@@ -1,9 +1,11 @@
 import { StyleSheet } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import TabBarButton from "@/components/TabBarButton";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import useHideTabBar from "@/shared/hooks/useHideTabBar";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from "react-native-reanimated";
+import { Box } from "@/components/ui/box";
+import { BlurView } from "expo-blur";
+import { globalColors } from "@/shared/constant/constants";
 
 interface TabBarProps {
     primaryColor: string;
@@ -14,32 +16,32 @@ interface TabBarProps {
 const TabBar: React.FC<TabBarProps> = ({ primaryColor, secondaryColor, props }) => {
     const { state, descriptors, navigation } = props;
     const shouldHideTabBar = useHideTabBar();
-
-    const tabBarAnimation = useSharedValue(0);
-
-    const animatedStyles = useAnimatedStyle(() => {
-        return {
-            transform: [
-                {
-                    translateY: withTiming(shouldHideTabBar ? 100 : 0, {
-                        duration: 300,
-                        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-                    }),
-                },
-            ],
-        };
-    }, [shouldHideTabBar]);
+    const [isTabBarVisible, setIsTabBarVisible] = useState<boolean>(true);
 
     useEffect(() => {
-        tabBarAnimation.value = shouldHideTabBar ? 100 : 0;
-    }, [tabBarAnimation, shouldHideTabBar]);
+        setIsTabBarVisible(!shouldHideTabBar);
+    }, [shouldHideTabBar]);
 
     return (
-        // <View
-        //     className="absolute bottom-5 flex-row justify-between items-center bg-white mx-5 py-4 rounded-full shadow-2xl"
-        //     style={[shouldHideTabBar && { display: "none" }]}
-        // >
-        <Animated.View style={[styles.tabBar, animatedStyles]}>
+        <Box
+            style={[
+                styles.tabBar,
+                { display: isTabBarVisible ? "flex" : "none" },
+            ]}
+        >
+            {/*<BlurView*/}
+            {/*    intensity={45}*/}
+            {/*    tint={"regular"}*/}
+            {/*    // blurReductionFactor={10}*/}
+            {/*    experimentalBlurMethod={"dimezisBlurView"}*/}
+            {/*    style={{*/}
+            {/*        ...StyleSheet.absoluteFillObject,*/}
+            {/*        borderTopLeftRadius: 25,*/}
+            {/*        borderTopRightRadius: 25,*/}
+            {/*        backgroundColor: "transparent",*/}
+            {/*        overflow: "hidden",*/}
+            {/*    }}*/}
+            {/*/>*/}
             {state.routes.map((route, index) => {
                 const { options } = descriptors[route.key];
                 const label =
@@ -79,36 +81,28 @@ const TabBar: React.FC<TabBarProps> = ({ primaryColor, secondaryColor, props }) 
                         onLongPress={onLongPress}
                         isFocused={isFocused}
                         routeName={route.name}
-                        color={isFocused ? primaryColor : secondaryColor}
+                        color={isFocused ? primaryColor : "white"}
                         label={label}
                     />
                 );
             })}
-        </Animated.View>
+        </Box>
     );
 };
 
 const styles = StyleSheet.create({
     tabBar: {
         position: "absolute",
-        bottom: 20,
-        left: 20,
-        right: 20,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        borderTopRightRadius: 25,
+        borderTopLeftRadius: 25,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "white",
-        paddingVertical: 16,
-        paddingHorizontal: 20,
-        borderRadius: 100,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        backgroundColor: globalColors.secondaryColor,
+        paddingVertical: 10,
     },
 });
 

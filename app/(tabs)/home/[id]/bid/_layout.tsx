@@ -1,9 +1,10 @@
 import { Stack } from "expo-router";
 
-export default function HomeLayout() {
+export default function BidLayout() {
 
     return (
         <Stack screenOptions={{
+            headerShadowVisible: false,
             headerShown: false,
         }} />
     );

@@ -2,6 +2,8 @@ import { Pressable, StyleSheet, TextStyle, ViewStyle } from "react-native";
 import React, { useEffect } from "react";
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { tabBarIcons } from "@/shared/icons";
+import { Box } from "@/components/ui/box";
+import { globalColors } from "@/shared/constant/constants";
 
 interface TabBarButtonProps {
     isFocused: boolean;
@@ -33,7 +35,7 @@ const TabBarButton = (props: TabBarButtonProps) => {
         );
         const top = interpolate(
             scale.value,
-            [0, 1],
+            [0, 1.2],
             [0, 8],
         );
 
@@ -62,16 +64,18 @@ const TabBarButton = (props: TabBarButtonProps) => {
     }
     return (
         <Pressable {...props} style={styles.container}>
-            <Animated.View style={[animatedIconStyle]}>
-                <Icon color={color} />
-            </Animated.View>
+            <Box style={[styles.box, isFocused ? styles.focused : styles.unfocused]}>
+                <Animated.View style={[animatedIconStyle]}>
+                    <Icon color={color} size={20} />
+                </Animated.View>
 
-            <Animated.Text style={[{
-                color,
-                fontSize: 11,
-            }, animatedTextStyle]}>
-                {label}
-            </Animated.Text>
+                <Animated.Text style={[{
+                    color,
+                    fontSize: 10,
+                }, animatedTextStyle]}>
+                    {label}
+                </Animated.Text>
+            </Box>
         </Pressable>
     );
 };
@@ -82,6 +86,19 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         gap: 4,
+    },
+    box: {
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    focused: {
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        backgroundColor: globalColors.backgroundMuted,
+    },
+    unfocused: {
+        backgroundColor: "transparent",
     },
 });
 

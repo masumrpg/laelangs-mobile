@@ -1,13 +1,13 @@
 import { Stack } from "expo-router";
-import { Heading } from "@/components/ui/heading";
+import { globalColors } from "@/shared/constant/constants";
 
-export default function HomeLayout() {
+export default function TransactionLayout() {
     return (
-        <Stack>
-            <Stack.Screen
-                name="index"
-                options={{ headerTitle: () => <Heading>Transaction</Heading> }}
-            />
-        </Stack>
+        <Stack screenOptions={{
+            headerShown: false,
+            headerStyle: {
+                backgroundColor: globalColors.secondaryColor,
+            },
+        }} />
     );
 }

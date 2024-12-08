@@ -6,7 +6,7 @@ import { useZodForm } from "@/shared/hooks/useZodForm";
 import { LoginSchema, loginSchema } from "@/feature/login/schema";
 import FormInput from "@/components/FormInput";
 import { Heading } from "@/components/ui/heading";
-import { useAuth } from "@/contex/AuthContex";
+import { useAuth } from "@/shared/contex/AuthContex";
 import { AuthSchema } from "@/feature/auth/schema";
 import { Box } from "@/components/ui/box";
 
@@ -55,13 +55,13 @@ export default function Login() {
     return (
         <Box className="flex-1 items-center justify-center gap-y-10 px-10">
             {/*<BlobBackground />*/}
-            <Heading className="text-primary-0 text-3xl font-bold">Login</Heading>
+            <Heading className="text-primary-500 text-3xl font-bold">Login</Heading>
             <FormInput className={"w-11/12 max-w-400 gap-y-5"} fields={fields} form={form} onSubmit={handleLogin}
                        buttonName="Login" />
             <Text className="text-gray-500 text-base text-center">
                 Belum punya akun?{" "}
                 <Link href={"/auth/register"}>
-                    <Text className="text-primary-0 font-bold">Register</Text>
+                    <Text className="text-primary-500 font-bold">Register</Text>
                 </Link>
             </Text>
         </Box>

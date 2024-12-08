@@ -1,8 +1,9 @@
 import { Tabs, useRouter } from "expo-router";
-import { useAuth } from "@/contex/AuthContex";
+import { useAuth } from "@/shared/contex/AuthContex";
 import TabBar from "@/components/TabBar";
 import { tabBarNameList } from "@/shared/icons";
 import { formatCamelCaseToTitle } from "@/lib/utils";
+import { globalColors } from "@/shared/constant/constants";
 
 export default function TabsLayout() {
     const { isAuthenticated } = useAuth();
@@ -14,7 +15,8 @@ export default function TabsLayout() {
 
     return (
         <Tabs
-            tabBar={props => <TabBar primaryColor={"#88C273"} secondaryColor={"#737373"} props={props} />}
+            tabBar={props => <TabBar primaryColor={globalColors.secondaryColor} secondaryColor={"#737373"}
+                                     props={props} />}
             screenOptions={{
                 headerShown: false,
                 tabBarHideOnKeyboard: true,

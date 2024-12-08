@@ -29,14 +29,14 @@ export default function Register() {
 
     return (
         <Box className="flex-1 items-center justify-center gap-y-10 px-10">
-            <Heading className="text-primary-0 text-3xl font-bold">Register</Heading>
+            <Heading className="text-primary-500 text-3xl font-bold">Register</Heading>
             <FormInput className={"w-11/12 max-w-400 gap-y-5"} fields={fields} form={form} onSubmit={handleRegister}
                        buttonName="Register" />
 
             <Text className="text-gray-500 text-base text-center">
                 Belum punya akun?{" "}
                 <Link href={"/auth/login"}>
-                    <Text className="text-primary-0 font-bold">Login</Text>
+                    <Text className="text-primary-500 font-bold">Login</Text>
                 </Link>
             </Text>
         </Box>

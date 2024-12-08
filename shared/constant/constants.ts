@@ -16,3 +16,9 @@ export const NAV_THEME = {
         text: "hsl(0 0% 98%)", // foreground
     },
 };
+
+export const globalColors = {
+    primaryColor: "#88C273",
+    secondaryColor: "#FFA24C",
+    backgroundMuted: "#FFEDD5",
+};

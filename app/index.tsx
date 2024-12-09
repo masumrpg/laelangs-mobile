@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ActivityIndicator, View } from "react-native";
 import { useAuth } from "@/shared/contex/AuthContex";
 
+
 export default function Index() {
     const { authData } = useAuth();
     const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean | null>(null);

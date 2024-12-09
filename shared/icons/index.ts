@@ -6,7 +6,7 @@ type IconComponent = React.ElementType;
 export const tabBarIcons: Record<string, IconComponent> = {
     home: House,
     transaction: ReceiptText,
-    shop: ShoppingCart,
+    cart: ShoppingCart,
     profile: User,
 };
 

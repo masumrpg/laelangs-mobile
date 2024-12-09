@@ -4,48 +4,54 @@ import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
 import { Card } from "@/components/ui/card";
 import { Search } from "lucide-react-native";
-import { formatRupiah } from "@/lib/utils";
+import { cn, formatRupiah } from "@/lib/utils";
 import { FlashList } from "@shopify/flash-list";
+import { useAuctions } from "@/feature/main/hooks/useAuctions";
+import Loader from "@/components/Loader";
+import { Auction } from "@/feature/main/schema";
+import { useRouter } from "expo-router";
 
 export default function Index() {
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState("On Process");
-
-    const auctionItems = [
-        {
-            id: 1,
-            title: "Abdul dilelang guyss",
-            location: "location",
-            highestBid: 180000,
-        },
-        {
-            id: 2,
-            title: "Abdul dilelang guyss",
-            location: "location",
-            highestBid: 180000,
-        },
-    ];
-
     const tabs = ["On Process", "Success", "Failed"];
 
-    const renderAuctionItem = ({ item }: { item: typeof auctionItems[0] }) => (
-        <TouchableOpacity onPress={() => console.log("Auction Item", item)}>
+    const { data: auction, isLoading } = useAuctions();
+
+    if (isLoading || !auction) return <Loader />;
+
+    const handleBid = (id: string) => {
+        router.push(`/cart/${id}`);
+    };
+
+
+    const renderAuctionItem = ({ item }: { item: Auction }) => (
+        <TouchableOpacity onPress={() => handleBid(item.auctionId)}>
             <Card
-                key={item.id}
+                key={item.auctionId}
                 className="flex-row items-center mb-4 p-4 border border-gray-300 rounded-lg"
             >
-                {/* Image Placeholder */}
-                <View className="w-16 h-16 bg-gray-200 rounded-lg mr-4" />
+                {/* Image */}
+                <View className={"w-16 h-16 rounded-lg mr-4 overflow-hidden"}>
+                    <Image
+                        source={{ uri: "https://img.freepik.com/premium-vector/boy-illustration-vector_844724-3009.jpg" }}
+                        className="w-full h-full"
+                        resizeMode="cover"
+                    />
+                </View>
 
                 {/* Details */}
                 <Box className="flex-1">
-                    <Text className="text-lg font-bold">{item.title}</Text>
+                    <Text className="text-lg font-bold">{item.productName}</Text>
                     <Text className="text-gray-500">{item.location}</Text>
                 </Box>
 
                 {/* Highest Bid */}
-                <Text className="text-lg font-bold text-primary-500">
-                    {formatRupiah(item.highestBid.toString())}
-                </Text>
+                <Box className="text-lg font-bold text-primary-500">
+                    <Text>
+                        {formatRupiah(item.lastPrice.toString())}
+                    </Text>
+                </Box>
             </Card>
         </TouchableOpacity>
     );
@@ -74,9 +80,10 @@ export default function Index() {
                         }`}
                     >
                         <Text
-                            className={`text-center ${
-                                activeTab === tab ? "text-white" : "text-gray-600"
-                            }`}
+                            className={cn(
+                                activeTab === tab ? "text-white" : "text-gray-600",
+                                "text-center",
+                            )}
                         >
                             {tab}
                         </Text>
@@ -86,9 +93,9 @@ export default function Index() {
 
             {/* Auction Items */}
             <FlashList
-                data={auctionItems}
+                data={auction}
                 renderItem={renderAuctionItem}
-                keyExtractor={(item) => item.id.toString()}
+                keyExtractor={(item) => item.auctionId}
                 estimatedItemSize={100}
                 contentContainerStyle={{ paddingBottom: 16 }}
             />

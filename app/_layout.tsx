@@ -13,6 +13,9 @@ import { ThemeProvider } from "@react-navigation/core";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as SecureStore from "expo-secure-store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
+
 
 export {
     ErrorBoundary,
@@ -20,11 +23,19 @@ export {
 
 SplashScreen.preventAutoHideAsync();
 
+configureReanimatedLogger({
+    level: ReanimatedLogLevel.warn,
+    strict: false,
+});
+
+
 export default function RootLayout() {
     const [loaded, error] = useFonts({
         SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
         ...FontAwesome.font,
     });
+
+    const queryClient = new QueryClient();
 
     useEffect(() => {
         if (error) throw error;
@@ -43,7 +54,9 @@ export default function RootLayout() {
     return (
         <GluestackUIProvider mode="light">
             <ThemeProviderRoot>
-                <RootLayoutContent />
+                <QueryClientProvider client={queryClient}>
+                    <RootLayoutContent />
+                </QueryClientProvider>
             </ThemeProviderRoot>
         </GluestackUIProvider>
     );

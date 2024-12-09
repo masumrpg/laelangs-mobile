@@ -17,33 +17,42 @@ import { ChevronDown, MapPin, Search } from "lucide-react-native";
 import { Heading } from "@/components/ui/heading";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "expo-router";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
-import { mockData, MockTypeData } from "@/data";
 import { globalColors } from "@/shared/constant/constants";
 import LottieView from "lottie-react-native";
 import timeAnimation from "@/assets/lottie/time.json";
+import { useAuctions } from "@/feature/main/hooks/useAuctions";
+import Loader from "@/components/Loader";
+import { Auction } from "@/feature/main/schema";
+import { formatRupiah } from "@/lib/utils";
+import { useResponsive } from "@/shared/hooks/useResponsive";
 
-// Gambar untuk background bermotif
 const backgroundPattern = "https://www.transparenttextures.com/patterns/cubes.png"; // URL motif background
 
 export default function Index() {
     const router = useRouter();
+    const { height } = useResponsive();
+    const { data: auctions, isLoading } = useAuctions();
 
-    const renderItem = ({ item }: { item: MockTypeData }) => (
+    if (isLoading || !auctions) {
+        return <Loader />;
+    }
+
+    const renderItem = ({ item }: { item: Auction }) => (
         <TouchableOpacity
             className="shadow-sm "
-            onPress={() => router.push(`/home/${item.id}`)}
+            onPress={() => router.push(`/home/${item.auctionId}`)}
         >
             <Card variant="elevated" className="flex-row items-center p-4 mb-4 rounded-xl bg-orange-200">
                 <Image
-                    source={{ uri: item.image }}
+                    source={{ uri: "https://cdn1-production-images-kly.akamaized.net/NX24SOQVa3oQ4q0wHe2X-pOfhA0=/1200x1200/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/4607218/original/083109200_1697021875-PS5_versi_2023.jpg" }}
                     className="w-16 h-16 rounded-md mr-4"
                     resizeMode="cover"
                 />
                 <Box className="flex-1">
-                    <Text className="font-bold text-base mb-1">{item.title}</Text>
-                    <Text className="text-gray-500 text-sm mb-1">{item.location}</Text>
-                    <Text className="text-black font-semibold text-sm">Bid Tertinggi {item.bid}</Text>
+                    <Text className="font-bold text-base mb-1">{item.productName}</Text>
+                    <Text className="text-gray-500 text-sm mb-1">{item.auctionStatus}</Text>
+                    <Text className="text-black font-semibold text-sm">Bid
+                        Tertinggi {formatRupiah(item.lastPrice.toString())}</Text>
                 </Box>
             </Card>
         </TouchableOpacity>
@@ -60,7 +69,7 @@ export default function Index() {
                     className="pt-16 px-5"
                     style={{
                         flex: 1,
-                        height: hp("30%"),
+                        height: height("30%"),
                         backgroundColor: globalColors.secondaryColor,
                         borderBottomLeftRadius: 20,
                         borderBottomRightRadius: 20,
@@ -139,13 +148,14 @@ export default function Index() {
 
                     {/* Item List */}
                     <FlashList
-                        data={mockData}
+                        data={auctions}
                         renderItem={renderItem}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.auctionId}
                         estimatedItemSize={120}
                         contentContainerStyle={{ paddingBottom: 16 }}
                         showsVerticalScrollIndicator={false}
                         scrollEnabled={false}
+                        // numColumns={2}
                     />
                 </Box>
             </ScrollView>

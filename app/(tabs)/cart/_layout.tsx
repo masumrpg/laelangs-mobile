@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 
-export default function ShopLayout() {
+export default function CartLayout() {
     return (
         <Stack
             screenOptions={{

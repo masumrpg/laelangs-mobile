@@ -1,5 +1,5 @@
 import LottieView from "lottie-react-native";
-import loadingAnimaton from "@/assets/lottie/fast-delivery.json";
+import loadingAnimaton from "@/assets/lottie/loading.json";
 import { Box } from "@/components/ui/box";
 
 export default function Loader() {
@@ -8,8 +8,8 @@ export default function Loader() {
             <LottieView
                 style={{
                     backgroundColor: "transparent",
-                    width: 400,
-                    height: 400,
+                    width: 200,
+                    height: 200,
                 }}
                 source={loadingAnimaton}
                 autoPlay

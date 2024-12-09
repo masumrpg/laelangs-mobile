@@ -1,8 +1,8 @@
-import React from "react";
 import { useLocalSearchParams } from "expo-router";
+import { useAuction } from "@/feature/main/hooks/useAuctions";
 import Loader from "@/components/Loader";
 import BidPayScreen from "@/feature/main/components/BidPayScreen";
-import { useAuction } from "@/feature/main/hooks/useAuctions";
+import React from "react";
 
 export default function Index() {
     const { id } = useLocalSearchParams();

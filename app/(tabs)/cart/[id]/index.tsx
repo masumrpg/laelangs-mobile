@@ -1,21 +1,20 @@
-import React from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import Loader from "@/components/Loader";
 import BidDetailScreen from "@/feature/main/components/BidDetailScreen";
 import { useAuction } from "@/feature/main/hooks/useAuctions";
+import Loader from "@/components/Loader";
 
 export default function Index() {
-    const { id } = useLocalSearchParams();
     const router = useRouter();
+    const { id } = useLocalSearchParams();
     const { data: auction, isLoading } = useAuction(id as string);
 
-    if (isLoading || !auction) {
-        return <Loader />;
-    }
+    if (isLoading || !auction) return <Loader />;
 
-    const handleBid = () => {
-        router.push(`/home/${id}/bid`);
+    const handleAdditionalBid = () => {
+        router.push(`/cart/${id}/bid`);
     };
 
-    return <BidDetailScreen auction={auction} handleInitialBid={handleBid} />;
-};
+    return (
+        <BidDetailScreen auction={auction} handleAdditionalBid={handleAdditionalBid} />
+    );
+}

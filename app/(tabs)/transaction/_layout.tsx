@@ -1,13 +1,11 @@
 import { Stack } from "expo-router";
-import { globalColors } from "@/shared/constant/constants";
+import Header from "@/components/Header";
 
 export default function TransactionLayout() {
     return (
         <Stack screenOptions={{
-            headerShown: false,
-            headerStyle: {
-                backgroundColor: globalColors.secondaryColor,
-            },
+            headerShown: true,
+            header: () => <Header text={"Riwayat Lelang"} />,
         }} />
     );
 }

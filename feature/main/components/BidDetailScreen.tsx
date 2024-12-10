@@ -1,5 +1,4 @@
 import { Box } from "@/components/ui/box";
-import { ScrollView } from "react-native";
 import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { cn, formatRupiah } from "@/lib/utils";
@@ -7,14 +6,17 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { Auction } from "@/feature/main/schema";
 import CarouselImage from "@/components/CarouselImage";
+import PullToRefresh from "@/components/PullToRefresh";
+import ScreenLayout from "@/components/ScreenLayout";
 
 interface BidScreenProps {
     auction: Auction;
+    className?: string;
     handleInitialBid?: () => void;
     handleAdditionalBid?: () => void;
 }
 
-export default function BidDetailScreen({ auction, handleInitialBid, handleAdditionalBid }: BidScreenProps) {
+export default function BidDetailScreen({ auction, className, handleInitialBid, handleAdditionalBid }: BidScreenProps) {
     const myDummyPrice = 200;
 
     const tableAuction = [
@@ -28,9 +30,17 @@ export default function BidDetailScreen({ auction, handleInitialBid, handleAddit
         ["Kategori", auction.category],
     ];
 
+    const onRefresh = async () => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(true);
+            }, 2000);
+        });
+    };
+
     return (
-        <ScrollView className={"bg-white"}>
-            <Box className="flex-1 p-5">
+        <PullToRefresh onRefresh={onRefresh}>
+            <ScreenLayout className={className}>
                 <CarouselImage imagesUrl={[
                     "https://cdn1-production-images-kly.akamaized.net/NX24SOQVa3oQ4q0wHe2X-pOfhA0=/1200x1200/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/4607218/original/083109200_1697021875-PS5_versi_2023.jpg",
                     "https://cdn1-production-images-kly.akamaized.net/NX24SOQVa3oQ4q0wHe2X-pOfhA0=/1200x1200/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/4607218/original/083109200_1697021875-PS5_versi_2023.jpg",
@@ -123,7 +133,7 @@ export default function BidDetailScreen({ auction, handleInitialBid, handleAddit
                         deskripsi keadaan barang terlebih dahulu.
                     </Text>
                 </Box>
-            </Box>
-        </ScrollView>
+            </ScreenLayout>
+        </PullToRefresh>
     );
 }

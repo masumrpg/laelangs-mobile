@@ -4,7 +4,6 @@ import TabBarButton from "@/components/TabBarButton";
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import useHideTabBar from "@/shared/hooks/useHideTabBar";
 import { Box } from "@/components/ui/box";
-import { BlurView } from "expo-blur";
 import { globalColors } from "@/shared/constant/constants";
 
 interface TabBarProps {
@@ -29,19 +28,6 @@ const TabBar: React.FC<TabBarProps> = ({ primaryColor, secondaryColor, props }) 
                 { display: isTabBarVisible ? "flex" : "none" },
             ]}
         >
-            {/*<BlurView*/}
-            {/*    intensity={45}*/}
-            {/*    tint={"regular"}*/}
-            {/*    // blurReductionFactor={10}*/}
-            {/*    experimentalBlurMethod={"dimezisBlurView"}*/}
-            {/*    style={{*/}
-            {/*        ...StyleSheet.absoluteFillObject,*/}
-            {/*        borderTopLeftRadius: 25,*/}
-            {/*        borderTopRightRadius: 25,*/}
-            {/*        backgroundColor: "transparent",*/}
-            {/*        overflow: "hidden",*/}
-            {/*    }}*/}
-            {/*/>*/}
             {state.routes.map((route, index) => {
                 const { options } = descriptors[route.key];
                 const label =

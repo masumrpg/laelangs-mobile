@@ -1,8 +1,9 @@
 import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 import { useAuth } from "@/shared/contex/AuthContex";
+import Loader from "@/components/Loader";
 
 
 export default function Index() {
@@ -21,17 +22,13 @@ export default function Index() {
         return (
             <View className="flex-1 justify-center items-center">
                 {/*Loader*/}
-                <ActivityIndicator size="large" color="#0000ff" />
+                <Loader />
             </View>
         );
     }
 
-    // FIXME please delete this
-    let accessToken = authData?.accessToken;
-
     return isOnboardingComplete ? (
-        // authData?.access_token
-        accessToken
+        authData?.accessToken
             ? <Redirect href="/(tabs)/home" /> :
             <Redirect href="/auth/login" />) : <Redirect href="/onboarding" />;
 }

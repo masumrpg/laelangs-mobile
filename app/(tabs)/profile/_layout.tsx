@@ -1,11 +1,12 @@
 import { Stack } from "expo-router";
-import HomeSearch from "@/feature/home/components/HomeSearch";
+import Header from "@/components/Header";
 
 export default function ProfileLayout() {
     return (
         <Stack
             screenOptions={{
-                headerShown: false,
+                headerShown: true,
+                header: () => <Header text={"Profile"} />,
             }}
         />
     );

@@ -11,10 +11,9 @@ import { StatusBar } from "expo-status-bar";
 import { ThemeProviderRoot, useTheme } from "@/components/ui/theme-provider/ThemeProviderRoot";
 import { ThemeProvider } from "@react-navigation/core";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
+import { useClearStorage } from "@/lib/utils";
 
 
 export {
@@ -65,10 +64,8 @@ export default function RootLayout() {
 function RootLayoutContent() {
     const { theme } = useTheme();
 
-    // FIXME hanya untuk clear onboard
-    // useEffect(() => {
-    //     AsyncStorage.clear();
-    // }, []);
+    // FIXME clear storage
+    // useClearStorage();
     return (
         <ThemeProvider value={theme === "dark" ? DarkTheme : DefaultTheme}>
             <StatusBar style={theme === "light" ? "dark" : "light"} />

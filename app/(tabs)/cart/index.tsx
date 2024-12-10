@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextInput, Pressable, View, Image, TouchableOpacity } from "react-native";
+import { Image, Pressable, TextInput, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
 import { Card } from "@/components/ui/card";
@@ -10,6 +10,8 @@ import { useAuctions } from "@/feature/main/hooks/useAuctions";
 import Loader from "@/components/Loader";
 import { Auction } from "@/feature/main/schema";
 import { useRouter } from "expo-router";
+import ScreenLayout from "@/components/ScreenLayout";
+import PullToRefresh from "@/components/PullToRefresh";
 
 export default function Index() {
     const router = useRouter();
@@ -32,13 +34,13 @@ export default function Index() {
                 className="flex-row items-center mb-4 p-4 border border-gray-300 rounded-lg"
             >
                 {/* Image */}
-                <View className={"w-16 h-16 rounded-lg mr-4 overflow-hidden"}>
+                <Box className={"w-16 h-16 rounded-lg mr-4 overflow-hidden"}>
                     <Image
                         source={{ uri: "https://img.freepik.com/premium-vector/boy-illustration-vector_844724-3009.jpg" }}
                         className="w-full h-full"
                         resizeMode="cover"
                     />
-                </View>
+                </Box>
 
                 {/* Details */}
                 <Box className="flex-1">
@@ -56,49 +58,59 @@ export default function Index() {
         </TouchableOpacity>
     );
 
+    const onRefresh = async () => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(true);
+            }, 2000);
+        });
+    };
+
     return (
-        <Box className="flex-1 p-5 py-16 bg-white">
-            {/* Search Bar */}
-            <Box className="flex-row items-center mb-4 gap-x-2">
-                <TextInput
-                    className="flex-1 border border-gray-300 rounded-lg p-3"
-                    placeholder="Search"
-                />
-                <Pressable className="p-3 rounded-lg border border-gray-300">
-                    <Search size={18} color="black" />
-                </Pressable>
-            </Box>
-
-            {/* Tabs */}
-            <Box className="flex-row mb-4 gap-x-3">
-                {tabs.map((tab) => (
-                    <Pressable
-                        key={tab}
-                        onPress={() => setActiveTab(tab)}
-                        className={`flex-1 py-2 px-4 rounded-lg ${
-                            activeTab === tab ? "bg-primary-500" : "border border-gray-300"
-                        }`}
-                    >
-                        <Text
-                            className={cn(
-                                activeTab === tab ? "text-white" : "text-gray-600",
-                                "text-center",
-                            )}
-                        >
-                            {tab}
-                        </Text>
+        <PullToRefresh onRefresh={onRefresh}>
+            <ScreenLayout>
+                {/* Search Bar */}
+                <Box className="flex-row items-center mb-4 gap-x-2">
+                    <TextInput
+                        className="flex-1 border border-gray-300 rounded-lg p-3"
+                        placeholder="Search"
+                    />
+                    <Pressable className="p-3 rounded-lg border border-gray-300">
+                        <Search size={18} color="black" />
                     </Pressable>
-                ))}
-            </Box>
+                </Box>
 
-            {/* Auction Items */}
-            <FlashList
-                data={auction}
-                renderItem={renderAuctionItem}
-                keyExtractor={(item) => item.auctionId}
-                estimatedItemSize={100}
-                contentContainerStyle={{ paddingBottom: 16 }}
-            />
-        </Box>
+                {/* Tabs */}
+                <Box className="flex-row mb-4 gap-x-3">
+                    {tabs.map((tab) => (
+                        <Pressable
+                            key={tab}
+                            onPress={() => setActiveTab(tab)}
+                            className={`flex-1 py-2 px-4 rounded-lg ${
+                                activeTab === tab ? "bg-primary-500" : "border border-gray-300"
+                            }`}
+                        >
+                            <Text
+                                className={cn(
+                                    activeTab === tab ? "text-white" : "text-gray-600",
+                                    "text-center",
+                                )}
+                            >
+                                {tab}
+                            </Text>
+                        </Pressable>
+                    ))}
+                </Box>
+
+                {/* Auction Items */}
+                <FlashList
+                    data={auction}
+                    renderItem={renderAuctionItem}
+                    keyExtractor={(item) => item.auctionId}
+                    estimatedItemSize={100}
+                    contentContainerStyle={{ paddingBottom: 16 }}
+                />
+            </ScreenLayout>
+        </PullToRefresh>
     );
 }

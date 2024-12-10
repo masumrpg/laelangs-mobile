@@ -169,18 +169,18 @@ export const config = {
         "--color-primary-950": "253 252 252",
 
         /* Secondary  */
-        "--color-secondary-0": "20 20 20",
-        "--color-secondary-50": "23 23 23",
-        "--color-secondary-100": "31 31 31",
-        "--color-secondary-200": "39 39 39",
-        "--color-secondary-300": "44 44 44",
-        "--color-secondary-400": "56 57 57",
-        "--color-secondary-500": "63 64 64",
-        "--color-secondary-600": "86 86 86",
-        "--color-secondary-700": "110 110 110",
-        "--color-secondary-800": "135 135 135",
-        "--color-secondary-900": "150 150 150",
-        "--color-secondary-950": "164 164 164",
+        "--color-secondary-0": "255 191 121",
+        "--color-secondary-50": "255 181 113",
+        "--color-secondary-100": "255 171 105",
+        "--color-secondary-200": "255 161 97",
+        "--color-secondary-300": "255 151 89",
+        "--color-secondary-400": "255 141 81",
+        "--color-secondary-500": "255 131 73", /* Base */
+        "--color-secondary-600": "232 121 68",
+        "--color-secondary-700": "209 111 63",
+        "--color-secondary-800": "186 101 58",
+        "--color-secondary-900": "163 91 53",
+        "--color-secondary-950": "140 81 48",
 
         /* Tertiary */
         "--color-tertiary-0": "84 49 18",

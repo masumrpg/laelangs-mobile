@@ -7,8 +7,8 @@ import { LoginSchema, loginSchema } from "@/feature/login/schema";
 import FormInput from "@/components/FormInput";
 import { Heading } from "@/components/ui/heading";
 import { useAuth } from "@/shared/contex/AuthContex";
-import { AuthSchema } from "@/feature/auth/schema";
 import { Box } from "@/components/ui/box";
+import { authService } from "@/service/authService";
 
 export default function Login() {
     const router = useRouter();
@@ -21,13 +21,12 @@ export default function Login() {
 
     const handleLogin = async (data: LoginSchema) => {
         try {
-            const response = await fakeLoginRequest(data);
-            const { accessToken, refreshToken, userId, merchantId } = response;
-
-            await login({ accessToken, refreshToken, userId, merchantId });
-
-            console.log(data);
-            router.replace("/home");
+            const res = await authService.login(data);
+            if (res?.data) {
+                await login(res.data);
+                alert("Successfully logged in!");
+                router.replace("/home");
+            }
         } catch (error) {
             alert("Login failed. Please try again.");
             console.log(error);
@@ -35,22 +34,6 @@ export default function Login() {
     };
 
     const fields = Object.keys(loginSchema._def.shape()) as Path<LoginSchema>[];
-
-    const fakeLoginRequest = async (credentials: LoginSchema): Promise<AuthSchema> => {
-        return new Promise((resolve) =>
-            setTimeout(
-                () =>
-                    resolve({
-                        accessToken: "fake_access_token",
-                        refreshToken: "fake_refresh_token",
-                        userId: "12345",
-                        merchantId: "67890",
-                    }),
-                1000,
-            ),
-        );
-    };
-
 
     return (
         <Box className="flex-1 items-center justify-center gap-y-10 px-10">

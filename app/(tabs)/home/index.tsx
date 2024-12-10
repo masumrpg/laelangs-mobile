@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, TouchableOpacity, ScrollView, TextInput, Text } from "react-native";
+import { Image, TouchableOpacity, TextInput, Text } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Box } from "@/components/ui/box";
 import {
@@ -26,18 +26,25 @@ import { Auction } from "@/feature/main/schema";
 import { formatRupiah } from "@/lib/utils";
 import { useResponsive } from "@/shared/hooks/useResponsive";
 import PullToRefresh from "@/components/PullToRefresh";
+import { useAuth } from "@/shared/contex/AuthContex";
 
 export default function Index() {
+    const { authData } = useAuth();
     const router = useRouter();
     const { height } = useResponsive();
     const { data: auctions, isLoading } = useAuctions();
 
     if (isLoading || !auctions) return <Loader />;
 
+    const handleItem = (item: Auction) => {
+        router.push(`/home/${item.auctionId}`);
+    };
+
+
     const renderItem = ({ item }: { item: Auction }) => (
         <TouchableOpacity
-            className="shadow-sm "
-            onPress={() => router.push(`/home/${item.auctionId}`)}
+            className="shadow-sm"
+            onPress={() => handleItem(item)}
         >
             <Card
                 key={item.auctionId}

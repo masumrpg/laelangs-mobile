@@ -1,5 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
+import { removeAuthData } from "@/lib/secureStoreUtils";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -36,4 +40,23 @@ export const formatRupiah = (value: string, prefix = "Rp. ") => {
 
     rupiah = split[1] !== undefined ? rupiah + "," + split[1] : rupiah;
     return prefix + rupiah;
+};
+
+
+// FIXME this file only clear storage
+export const useClearStorage = () => {
+    useEffect(() => {
+        async function clearStorage() {
+            try {
+                AsyncStorage.clear();
+                await removeAuthData();
+                console.log("Semua data berhasil dihapus dari Secure Store");
+            } catch (error) {
+                console.error("Gagal menghapus data dari Secure Store:", error);
+            }
+        }
+
+        clearStorage();
+
+    }, []);
 };

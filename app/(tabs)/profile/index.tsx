@@ -4,8 +4,12 @@ import { Box } from "@/components/ui/box";
 import { Button } from "@/components/ui/button";
 import ScreenLayout from "@/components/ScreenLayout";
 import PullToRefresh from "@/components/PullToRefresh";
+import httpClient from "@/lib/api";
+import { authService } from "@/service/authService";
+import { useAuth } from "@/shared/contex/AuthContex";
 
 export default function Index() {
+    const { logout } = useAuth();
     const userData = {
         name: "Ma'sum",
         email: "mclasix@example.com",
@@ -20,6 +24,11 @@ export default function Index() {
                 resolve(true);
             }, 2000);
         });
+    };
+
+    const logoutHandle = async () => {
+        const response = await authService.logout();
+        console.log("logout");
     };
 
     return (
@@ -55,6 +64,11 @@ export default function Index() {
                 {/* Edit Profile Button */}
                 <Button className="bg-primary-500 rounded-lg py-3">
                     <Text className="text-white text-center font-bold">Edit Profile</Text>
+                </Button>
+
+                {/*Log Out*/}
+                <Button onPress={logoutHandle} className="bg-primary-500 rounded-lg py-3 mt-10">
+                    <Text className="text-white text-center font-bold">Log Out</Text>
                 </Button>
             </ScreenLayout>
         </PullToRefresh>

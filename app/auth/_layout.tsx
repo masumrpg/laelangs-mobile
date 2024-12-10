@@ -1,5 +1,4 @@
 import { Stack } from "expo-router";
-import { ThemeToggle } from "~/components/ThemeToggle";
 import * as React from "react";
 
 export default function AuthLayout() {

@@ -14,6 +14,7 @@ import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import { useClearStorage } from "@/lib/utils";
+import addAuthInterceptor from "@/shared/middleware/authMiddleware";
 
 
 export {
@@ -27,6 +28,7 @@ configureReanimatedLogger({
     strict: false,
 });
 
+addAuthInterceptor();
 
 export default function RootLayout() {
     const [loaded, error] = useFonts({

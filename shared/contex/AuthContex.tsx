@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import * as SecureStore from "expo-secure-store";
-import { AuthSchema } from "@/feature/auth/schema";
+import { AuthResponse } from "@/feature/auth/schema";
+import { getAuthData, removeAuthData, setAuthData } from "@/lib/secureStoreUtils";
 
 type AuthContextType = {
-    authData: AuthSchema | null;
+    authData: AuthResponse | null;
     isAuthenticated: boolean;
-    login: (data: AuthSchema) => Promise<void>;
+    login: (data: AuthResponse) => Promise<void>;
     logout: () => Promise<void>;
     loading: boolean;
 };
@@ -13,15 +13,14 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [authData, setAuthData] = useState<AuthSchema | null>(null);
+    const [authData, setAuthDataState] = useState<AuthResponse | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Load auth data from SecureStore on app startup
         const loadAuthData = async () => {
-            const storedData = await SecureStore.getItemAsync("authData");
+            const storedData = await getAuthData();
             if (storedData) {
-                setAuthData(JSON.parse(storedData));
+                setAuthDataState(storedData);
             }
             setLoading(false);
         };
@@ -29,14 +28,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loadAuthData();
     }, []);
 
-    const login = async (data: AuthSchema) => {
-        await SecureStore.setItemAsync("authData", JSON.stringify(data));
-        setAuthData(data);
+    const login = async (data: AuthResponse) => {
+        await setAuthData(data);
+        setAuthDataState(data);
     };
 
     const logout = async () => {
-        await SecureStore.deleteItemAsync("authData");
-        setAuthData(null);
+        await removeAuthData();
+        setAuthDataState(null);
     };
 
     return (

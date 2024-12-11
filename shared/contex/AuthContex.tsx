@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { AuthResponse } from "@/feature/auth/schema";
 import { getAuthData, removeAuthData, setAuthData } from "@/lib/secureStoreUtils";
+import { startAccessTokenScheduler, stopAccessTokenScheduler } from "@/lib/scheduler";
+import { usePathname } from "expo-router";
 
 type AuthContextType = {
     authData: AuthResponse | null;
@@ -13,8 +15,15 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const pathname = usePathname();
     const [authData, setAuthDataState] = useState<AuthResponse | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // FIXME clear accessToken in 4 minute
+    useEffect(() => {
+        startAccessTokenScheduler();
+        return () => stopAccessTokenScheduler();
+    }, []);
 
     useEffect(() => {
         const loadAuthData = async () => {
@@ -26,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
 
         loadAuthData();
-    }, []);
+    }, [pathname]);
 
     const login = async (data: AuthResponse) => {
         await setAuthData(data);
@@ -36,13 +45,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const logout = async () => {
         await removeAuthData();
         setAuthDataState(null);
+        // console.log(authData);
+        // if (authData) {
+        //     const forLogout = authData;
+        //     forLogout.accessToken = "";
+        //     setAuthDataState(forLogout);
+        // }
     };
 
     return (
         <AuthContext.Provider
             value={{
                 authData,
-                isAuthenticated: !!authData,
+                isAuthenticated: !!authData?.accessToken,
                 login,
                 logout,
                 loading,

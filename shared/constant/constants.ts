@@ -22,3 +22,11 @@ export const globalColors = {
     secondaryColor: "#FFA24C",
     backgroundMuted: "#FFEDD5",
 };
+
+export const secureStoreKey = {
+    authData: "authData",
+};
+
+export const asyncStoreKey = {
+    onboardingComplete: "onboardingComplete",
+};

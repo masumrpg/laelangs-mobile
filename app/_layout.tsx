@@ -13,8 +13,8 @@ import { ThemeProvider } from "@react-navigation/core";
 import { DarkTheme, DefaultTheme } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
-import { useClearStorage } from "@/lib/utils";
 import addAuthInterceptor from "@/shared/middleware/authMiddleware";
+import Toast from "react-native-toast-message";
 
 
 export {
@@ -56,7 +56,9 @@ export default function RootLayout() {
         <GluestackUIProvider mode="light">
             <ThemeProviderRoot>
                 <QueryClientProvider client={queryClient}>
-                    <RootLayoutContent />
+                    <AuthProvider>
+                        <RootLayoutContent />
+                    </AuthProvider>
                 </QueryClientProvider>
             </ThemeProviderRoot>
         </GluestackUIProvider>
@@ -68,12 +70,12 @@ function RootLayoutContent() {
 
     // FIXME clear storage
     // useClearStorage();
+
     return (
         <ThemeProvider value={theme === "dark" ? DarkTheme : DefaultTheme}>
             <StatusBar style={theme === "light" ? "dark" : "light"} />
-            <AuthProvider>
-                <Stack screenOptions={{ headerShown: false }} />
-            </AuthProvider>
+            <Stack screenOptions={{ headerShown: false }} />
+            <Toast />
         </ThemeProvider>
     );
 }

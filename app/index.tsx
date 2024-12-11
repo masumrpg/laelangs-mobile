@@ -21,14 +21,13 @@ export default function Index() {
     if (isOnboardingComplete === null) {
         return (
             <View className="flex-1 justify-center items-center">
-                {/*Loader*/}
                 <Loader />
             </View>
         );
     }
 
     return isOnboardingComplete ? (
-        authData?.accessToken
+        authData?.accessToken !== "" || null || undefined
             ? <Redirect href="/(tabs)/home" /> :
             <Redirect href="/auth/login" />) : <Redirect href="/onboarding" />;
 }

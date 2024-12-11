@@ -1,17 +1,22 @@
-import { Tabs, useRouter } from "expo-router";
+import { Tabs, usePathname, useRouter } from "expo-router";
 import { useAuth } from "@/shared/contex/AuthContex";
 import TabBar from "@/components/TabBar";
 import { tabBarNameList } from "@/shared/icons";
 import { formatCamelCaseToTitle } from "@/lib/utils";
 import { globalColors } from "@/shared/constant/constants";
+import { useEffect } from "react";
 
 export default function TabsLayout() {
+    const pathname = usePathname();
     const { isAuthenticated } = useAuth();
     const router = useRouter();
 
-    if (!isAuthenticated) {
-        router.replace("/auth/login");
-    }
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            router.replace("/auth/login");
+        }
+    }, [isAuthenticated, pathname, router]);
 
     return (
         <Tabs

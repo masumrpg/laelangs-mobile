@@ -1,12 +1,11 @@
-import React, { ElementType, useEffect } from "react";
+import React, { ElementType } from "react";
 import { View } from "react-native";
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
+import { Text } from "react-native";
 import { cn, formatCamelCaseToTitle } from "@/lib/utils";
 import { Box } from "@/components/ui/box";
-
 
 interface FormInputProps<T extends FieldValues> {
     fields: Path<T>[];
@@ -17,6 +16,11 @@ interface FormInputProps<T extends FieldValues> {
     iconAfter?: ElementType;
     onChangeValue?: (value: string) => void;
     className?: string;
+    inputClassName?: string;
+    inputFieldClassName?: string;
+    buttonClassName?: string;
+    buttonTextClassName?: string;
+    isTitleNameActive?: boolean;
 }
 
 export default function FormInput<T extends FieldValues>({
@@ -28,36 +32,46 @@ export default function FormInput<T extends FieldValues>({
                                                              iconAfter,
                                                              onChangeValue,
                                                              className,
+                                                             inputClassName,
+                                                             inputFieldClassName,
+                                                             buttonClassName,
+                                                             buttonTextClassName,
+                                                             isTitleNameActive = false,
                                                          }: FormInputProps<T>) {
+    // Determining whether the form is valid and ready for submission
+    const isFormInvalid = !form.formState.isValid || form.formState.isSubmitting;
+
     return (
-        <View className={cn(
-            className,
-        )}>
+        <Box className={cn(className)}>
             {fields.map((field) => (
                 <Controller
                     key={field as string}
                     control={form.control}
                     name={field}
                     render={({ field: { onChange, value }, fieldState }) => (
-                        <Box className={"gap-y-2"}>
-                            {buttonName && (
-                                <Text size={"lg"} className="font-semibold text-primary-500">
+                        <Box className="gap-y-2 w-full">
+                            {buttonName && isTitleNameActive && (
+                                <Text className="font-semibold text-primary-500">
                                     {formatCamelCaseToTitle(field)}
                                 </Text>
                             )}
-                            <Input
-                                variant="outline"
-                                size="lg"
-                                isInvalid={!!fieldState.error}
-                            >
-                                {
-                                    iconBefore && (
-                                        <InputSlot className="pl-3">
-                                            <InputIcon as={iconBefore} />
-                                        </InputSlot>
-                                    )
-                                }
+                            <Input className={cn(
+                                inputClassName,
+                                "w-full rounded-xl bg-black/5 border-transparent",
+                            )}
+                                   size="xl"
+                                   isInvalid={!!fieldState.error}>
+
+                                {iconBefore && (
+                                    <InputSlot className="pl-3">
+                                        <InputIcon as={iconBefore} />
+                                    </InputSlot>
+                                )}
+
                                 <InputField
+                                    className={cn(
+                                        inputFieldClassName,
+                                    )}
                                     onChangeText={(text) => {
                                         onChange(text);
                                         if (onChangeValue) {
@@ -65,21 +79,17 @@ export default function FormInput<T extends FieldValues>({
                                         }
                                     }}
                                     value={value as string}
-                                    placeholder={
-                                        formatCamelCaseToTitle(field)
-                                    }
+                                    placeholder={formatCamelCaseToTitle(field)}
                                     secureTextEntry={field === "password" || field === "confirmPassword"}
                                     autoCapitalize={field === "name" ? "words" : "none"}
                                 />
-                                {
-                                    iconAfter && (
-                                        <InputSlot className="pr-3">
-                                            <InputIcon as={iconAfter} />
-                                        </InputSlot>
-                                    )
-                                }
+                                {iconAfter && (
+                                    <InputSlot className="pr-3">
+                                        <InputIcon as={iconAfter} />
+                                    </InputSlot>
+                                )}
                             </Input>
-                            {fieldState?.error && (buttonName === "" || null || undefined) && (
+                            {fieldState?.error && buttonName && (
                                 <Text className="text-red-500 text-sm mt-1">
                                     {fieldState.error.message}
                                 </Text>
@@ -90,16 +100,21 @@ export default function FormInput<T extends FieldValues>({
             ))}
             {buttonName && onSubmit && (
                 <Button
-                    disabled={form.formState.disabled}
+                    disabled={isFormInvalid}
                     className={cn(
-                        form.formState.disabled ? "bg-primary-100" : "",
-                        "mt-3",
+                        isFormInvalid ? "bg-gray-300 text-gray-500" : "bg-[#ffaa5b] text-white",
+                        "mt-3 data-[active=true]:bg-[#e08d40]", buttonClassName,
                     )}
                     onPress={form.handleSubmit(onSubmit)}
                 >
-                    <Text className="text-white font-bold text-center text-lg">{buttonName}</Text>
+                    <Text className={cn(
+                        isFormInvalid ? "text-gray-500" : "text-white",
+                        "font-bold text-center text-lg", buttonTextClassName,
+                    )}>
+                        {buttonName}
+                    </Text>
                 </Button>
             )}
-        </View>
+        </Box>
     );
 }

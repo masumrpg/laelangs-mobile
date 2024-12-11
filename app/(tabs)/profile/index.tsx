@@ -7,8 +7,10 @@ import PullToRefresh from "@/components/PullToRefresh";
 import httpClient from "@/lib/api";
 import { authService } from "@/service/authService";
 import { useAuth } from "@/shared/contex/AuthContex";
+import { useToast } from "@/shared/hooks/useToast";
 
 export default function Index() {
+    const { showToast } = useToast();
     const { logout } = useAuth();
     const userData = {
         name: "Ma'sum",
@@ -28,7 +30,14 @@ export default function Index() {
 
     const logoutHandle = async () => {
         const response = await authService.logout();
-        console.log("logout");
+        if (response.status === 200) {
+            showToast({
+                type: "success",
+                title: "Success",
+                message: "Suksess logout.",
+            });
+            await logout();
+        }
     };
 
     return (

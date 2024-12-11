@@ -5,13 +5,14 @@ import Onboarding from "react-native-onboarding-swiper";
 import onboardingData from "@/shared/constant/onboardingData";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
+import { asyncStoreKey } from "@/shared/constant/constants";
 
 
 export default function Index() {
     const router = useRouter();
 
     const finishOnboarding = async () => {
-        await AsyncStorage.setItem("onboardingComplete", "true");
+        await AsyncStorage.setItem(asyncStoreKey.onboardingComplete, "true");
         router.replace("/auth/login");
     };
 

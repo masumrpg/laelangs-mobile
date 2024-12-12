@@ -15,6 +15,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import addAuthInterceptor from "@/shared/middleware/authMiddleware";
 import Toast from "react-native-toast-message";
+import { useClearStorage } from "@/lib/utils";
 
 
 export {

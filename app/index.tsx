@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { View } from "react-native";
 import { useAuth } from "@/shared/contex/AuthContex";
 import Loader from "@/components/Loader";
+import LocalAuthBiometric from "@/components/LocalAuthBiometric";
 
 
 export default function Index() {
@@ -28,6 +29,9 @@ export default function Index() {
 
     return isOnboardingComplete ? (
         authData?.accessToken !== "" || null || undefined
-            ? <Redirect href="/(tabs)/home" /> :
+            ?
+            // <Redirect href="/(tabs)/home" />
+            <LocalAuthBiometric autoTrigger={true} />
+            :
             <Redirect href="/auth/login" />) : <Redirect href="/onboarding" />;
 }

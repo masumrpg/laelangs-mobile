@@ -8,8 +8,8 @@ export default function Index() {
     const { id } = useLocalSearchParams();
     const { data: auction, isLoading } = useAuction(id as string);
 
-    if (isLoading || !auction) return <Loader />;
+    if (isLoading || !auction?.data) return <Loader />;
 
 
-    return <BidPayScreen auction={auction} />;
+    return <BidPayScreen auction={auction.data} />;
 }

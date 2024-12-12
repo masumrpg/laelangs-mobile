@@ -4,7 +4,6 @@ import { Box } from "@/components/ui/box";
 import { Button } from "@/components/ui/button";
 import ScreenLayout from "@/components/ScreenLayout";
 import PullToRefresh from "@/components/PullToRefresh";
-import httpClient from "@/lib/api";
 import { authService } from "@/service/authService";
 import { useAuth } from "@/shared/contex/AuthContex";
 import { useToast } from "@/shared/hooks/useToast";

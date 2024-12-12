@@ -49,17 +49,19 @@ export default function Register() {
     return (
         <Box className="h-full w-full">
             {/*background*/}
-            <Image className={"w-full h-full absolute"} source={require("@/assets/images/background.png")} />
+            <Image className={"w-full h-full absolute -mt-28"} source={require("@/assets/images/background.png")} />
             {/*light*/}
             <Box className={"flex-row justify-around w-full absolute"}>
-                <Animated.Image entering={FadeInUp.delay(200).duration(1000).springify()} className={"h-[225] w-[90]"}
+                <Animated.Image entering={FadeInUp.delay(200).duration(1000).springify()}
+                                className={"h-[225] w-[90] -mt-20"}
                                 source={require("@/assets/images/light.png")} />
-                <Animated.Image entering={FadeInUp.delay(400).duration(1000).springify()} className={"h-[160] w-[65]"}
+                <Animated.Image entering={FadeInUp.delay(400).duration(1000).springify()}
+                                className={"h-[160] w-[65] -mt-20"}
                                 source={require("@/assets/images/light.png")} />
             </Box>
 
             {/*content*/}
-            <Box className={"h-full w-full px-5 justify-center items-center pt-64 gap-y-40"}>
+            <Box className={"h-full w-full px-5 justify-center items-center pt-48 gap-y-32"}>
                 <Box className={"flex items-center"}>
                     <Heading className="text-white text-6xl font-bold text-center">Register</Heading>
                 </Box>
@@ -68,10 +70,12 @@ export default function Register() {
                         className={"w-11/12 max-w-400 gap-y-5"} fields={fields}
                         form={form}
                         onSubmit={handleRegister}
-                        buttonName="Login"
+                        buttonName="Register"
                         inputClassName={"h-16 data-[focus=true]:border-[#ffaa5b]"}
                         buttonClassName={"h-16 rounded-xl"}
                         buttonTextClassName={"text-xl font-bold text-center text-white"}
+                        isTitleNameActive={true}
+                        titleNameClassName={"text-[#ffaa5b] text-xl ml-2"}
                     />
                     <Text className="text-gray-500 text-xl text-center mt-8">
                         Sudah punya akun?{" "}

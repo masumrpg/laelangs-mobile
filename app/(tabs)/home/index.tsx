@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, TouchableOpacity, TextInput, Text } from "react-native";
+import { Image, TouchableOpacity, TextInput, Text, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Box } from "@/components/ui/box";
 import {
@@ -23,47 +23,68 @@ import timeAnimation from "@/assets/lottie/time.json";
 import { useAuctions } from "@/feature/main/hooks/useAuctions";
 import Loader from "@/components/Loader";
 import { Auction } from "@/feature/main/schema";
-import { formatRupiah } from "@/lib/utils";
+import { buildFullURL, formatDateToIndonesian, formatRupiah } from "@/lib/utils";
 import { useResponsive } from "@/shared/hooks/useResponsive";
 import PullToRefresh from "@/components/PullToRefresh";
-import { useAuth } from "@/shared/contex/AuthContex";
+import { baseURL } from "@/lib/api";
 
 export default function Index() {
-    const { authData } = useAuth();
     const router = useRouter();
     const { height } = useResponsive();
     const { data: auctions, isLoading } = useAuctions();
 
-    if (isLoading || !auctions) return <Loader />;
+    if (isLoading || !auctions?.data) return <Loader />;
 
-    const handleItem = (item: Auction) => {
-        router.push(`/home/${item.auctionId}`);
+    const handleItem = (id: string) => {
+        router.push(`/home/${id}`);
     };
 
+    const renderItem = ({ item }: { item: Auction }) => {
+        const imageUrl = item.product.images?.[0]?.url
+            ? buildFullURL(baseURL, item.product.images[0].url)
+            : null;
 
-    const renderItem = ({ item }: { item: Auction }) => (
-        <TouchableOpacity
-            className="shadow-sm"
-            onPress={() => handleItem(item)}
-        >
-            <Card
-                key={item.auctionId}
-                className="flex-row items-center mb-4 p-4 border border-gray-300 rounded-lg"
-            >
-                <Image
-                    source={{ uri: "https://cdn1-production-images-kly.akamaized.net/NX24SOQVa3oQ4q0wHe2X-pOfhA0=/1200x1200/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/4607218/original/083109200_1697021875-PS5_versi_2023.jpg" }}
-                    className="w-16 h-16 rounded-md mr-4"
-                    resizeMode="cover"
-                />
-                <Box className="flex-1">
-                    <Text className="font-bold text-base mb-1">{item.productName}</Text>
-                    <Text className="text-gray-500 text-sm mb-1">{item.auctionStatus}</Text>
-                    <Text className="text-black font-semibold text-sm">Bid
-                        Tertinggi {formatRupiah(item.lastPrice.toString())}</Text>
-                </Box>
-            </Card>
-        </TouchableOpacity>
-    );
+        return (
+            <TouchableOpacity onPress={() => handleItem(item.id)}>
+                <Card key={item.id} className="flex-row items-center mb-4 p-4 border border-gray-300 rounded-lg">
+                    {/* Product Image or Placeholder */}
+                    <Box className={"w-16 h-16 rounded-lg mr-4 overflow-hidden"}>
+                        {imageUrl ? (
+                            <Image
+                                source={{ uri: imageUrl }}
+                                className="w-full h-full"
+                                resizeMode="cover"
+                            />
+                        ) : (
+                            <Box
+                                className={"w-16 h-16 rounded-lg mr-4 overflow-hidden justify-center items-center p-1"}
+                            >
+                                <Text className={"text-center"}>No Image</Text>
+                            </Box>
+                        )}
+                    </Box>
+
+                    {/* Product Details */}
+                    <Box className="flex-1">
+                        <Text className="text-lg font-bold">
+                            {item.product.productName}
+                        </Text>
+                        <Text className="text-sm">
+                            Kelipatan {formatRupiah(item.multiply.toString())}
+                        </Text>
+                        <Text className="text-gray-500 text-sm">
+                            {formatDateToIndonesian(item.dueDate)}
+                        </Text>
+                    </Box>
+
+                    {/* Price */}
+                    <Text className="text-lg font-bold text-primary-500">
+                        {formatRupiah(item.lastPrice.toString())}
+                    </Text>
+                </Card>
+            </TouchableOpacity>
+        );
+    };
 
     const onRefresh = async () => {
         return new Promise((resolve) => {
@@ -158,14 +179,26 @@ export default function Index() {
 
                 {/* Item List */}
                 <FlashList
-                    data={auctions}
+                    data={auctions.data}
                     renderItem={renderItem}
-                    keyExtractor={(item) => item.auctionId}
-                    estimatedItemSize={120}
-                    contentContainerStyle={{ paddingBottom: 16 }}
+                    keyExtractor={(item) => item.id}
+                    estimatedItemSize={10}
+                    contentContainerStyle={{
+                        paddingBottom: 16,
+                    }}
                     showsVerticalScrollIndicator={false}
-                    scrollEnabled={false}
-                    // numColumns={2}
+                    ListEmptyComponent={
+                        <View
+                            style={{
+                                flex: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: height("42%"),
+                            }}
+                        >
+                            <Text style={{ fontSize: 18, color: "gray" }}>Tidak ada Lelang</Text>
+                        </View>
+                    }
                 />
             </Box>
         </PullToRefresh>

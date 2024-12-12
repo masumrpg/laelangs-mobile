@@ -29,7 +29,8 @@ export default function Index() {
                 {/* Price */}
                 <Box className="text-2xl font-bold text-primary-500 mb-2">
                     <Text>
-                        {formatRupiah(3.500.toString())}
+                        {/*{formatRupiah(3.500.toString())}*/}
+                        3500
                     </Text>
                 </Box>
 

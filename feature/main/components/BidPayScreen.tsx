@@ -30,7 +30,7 @@ export default function BidPayScreen({ auction, className }: BidPayScreenProps) 
             <ScreenLayout className={className}>
                 {/* Product Details */}
                 <Box className="gap-y-2">
-                    <Text className="text-2xl text-center font-bold">{auction.productName}</Text>
+                    <Text className="text-2xl text-center font-bold">{auction.product.productName}</Text>
                     <Text
                         className="text-2xl text-center text-primary-500 font-semibold">{formatRupiah(auction.lastPrice.toString())}</Text>
                 </Box>

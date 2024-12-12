@@ -2,11 +2,12 @@ import { useQuery, useMutation, UseQueryOptions, UseQueryResult, UseMutationOpti
 import { auctionService } from "@/service/auctionService";
 import { AxiosError } from "axios";
 import { Auction } from "@/feature/main/schema";
+import { CommonResponse } from "@/shared/schema";
 
 export const useAuctions = (
-    options?: UseQueryOptions<Auction[], AxiosError>,
-): UseQueryResult<Auction[], AxiosError> => {
-    return useQuery<Auction[], AxiosError>({
+    options?: UseQueryOptions<CommonResponse<Auction[]>, AxiosError>,
+): UseQueryResult<CommonResponse<Auction[]>, AxiosError> => {
+    return useQuery<CommonResponse<Auction[]>, AxiosError>({
         queryKey: ["auctions"],
         queryFn: async () => await auctionService.getAll(),
         ...options,
@@ -15,9 +16,9 @@ export const useAuctions = (
 
 export const useAuction = (
     id: string,
-    options?: UseQueryOptions<Auction, AxiosError>,
-): UseQueryResult<Auction, AxiosError> => {
-    return useQuery<Auction, AxiosError>({
+    options?: UseQueryOptions<CommonResponse<Auction>, AxiosError>,
+): UseQueryResult<CommonResponse<Auction>, AxiosError> => {
+    return useQuery<CommonResponse<Auction>, AxiosError>({
         queryKey: ["auctions", id],
         queryFn: async () => await auctionService.getOne(id),
         ...options,

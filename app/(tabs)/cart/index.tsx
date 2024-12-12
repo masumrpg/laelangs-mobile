@@ -16,7 +16,7 @@ import PullToRefresh from "@/components/PullToRefresh";
 export default function Index() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("On Process");
-    const tabs = ["On Process", "Success", "Failed"];
+    const tabs = ["Menang", "Kalah"];
 
     const { data: auction, isLoading } = useAuctions();
 
@@ -28,9 +28,9 @@ export default function Index() {
 
 
     const renderAuctionItem = ({ item }: { item: Auction }) => (
-        <TouchableOpacity onPress={() => handleBid(item.auctionId)}>
+        <TouchableOpacity onPress={() => handleBid(item.id)}>
             <Card
-                key={item.auctionId}
+                key={item.id}
                 className="flex-row items-center mb-4 p-4 border border-gray-300 rounded-lg"
             >
                 {/* Image */}
@@ -51,7 +51,7 @@ export default function Index() {
                 {/* Highest Bid */}
                 <Box className="text-lg font-bold text-primary-500">
                     <Text>
-                        {formatRupiah(item.lastPrice.toString())}
+                        {formatRupiah(item.lastPrice)}
                     </Text>
                 </Box>
             </Card>
@@ -106,7 +106,7 @@ export default function Index() {
                 <FlashList
                     data={auction}
                     renderItem={renderAuctionItem}
-                    keyExtractor={(item) => item.auctionId}
+                    keyExtractor={(item) => item.id}
                     estimatedItemSize={100}
                     contentContainerStyle={{ paddingBottom: 16 }}
                 />

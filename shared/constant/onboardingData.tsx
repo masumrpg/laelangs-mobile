@@ -10,24 +10,24 @@ const onboardingData = () => {
             image: (
                 <LottieView style={{ width: 300, height: 300 }} source={auction} autoPlay loop />
             ),
-            title: "Welcome to Laelangs",
-            subtitle: "Discover, bid, and win your dream items at the best prices.",
+            title: "Selamat datang di Laelangs",
+            subtitle: "Temukan, tawar, dan menangkan barang impian Anda dengan harga terbaik.",
         },
         {
             backgroundColor: "#d1a9ff",
             image: (
                 <LottieView style={{ width: 450, height: 450 }} source={secure} autoPlay loop />
             ),
-            title: "Secure Payments",
-            subtitle: "Seamlessly bid with confidence using our secure payment system.",
+            title: "Pembayaran Aman",
+            subtitle: "Menawar tanpa hambatan dengan percaya diri menggunakan sistem pembayaran kami yang aman.",
         },
         {
             backgroundColor: "#bffffd",
             image: (
                 <LottieView style={{ width: 370, height: 370 }} source={fast} autoPlay loop />
             ),
-            title: "Fast Delivery",
-            subtitle: "Win auctions and get your items delivered to your doorstep quickly.",
+            title: "Pengiriman Cepat",
+            subtitle: "Menangkan lelang dan kirim barang Anda ke depan pintu Anda dengan cepat.",
         },
     ];
 };

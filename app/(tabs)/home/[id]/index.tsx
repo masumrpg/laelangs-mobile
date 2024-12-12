@@ -9,7 +9,7 @@ export default function Index() {
     const router = useRouter();
     const { data: auction, isLoading } = useAuction(id as string);
 
-    if (isLoading || !auction) {
+    if (isLoading || !auction?.data) {
         return <Loader />;
     }
 
@@ -17,5 +17,6 @@ export default function Index() {
         router.push(`/home/${id}/bid`);
     };
 
-    return <BidDetailScreen auction={auction} handleInitialBid={handleBid} />;
+    // TODO buat untuk nyocokin bid kita dengan id bid yang diklik
+    return <BidDetailScreen auction={auction.data} handleInitialBid={handleBid} />;
 };

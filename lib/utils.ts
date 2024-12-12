@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 import { removeAuthData } from "@/lib/secureStoreUtils";
 
 export function cn(...inputs: ClassValue[]) {
@@ -60,3 +59,24 @@ export const useClearStorage = () => {
 
     }, []);
 };
+
+export const formatDateToIndonesian = (dateString: string): string => {
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) return "";
+
+    const formatter = new Intl.DateTimeFormat("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+
+    return formatter.format(date);
+};
+
+export function buildFullURL(baseURL: string, itemURL: string): string {
+    if (!baseURL || !itemURL) {
+        throw new Error("baseURL and itemURL are required.");
+    }
+    return `${baseURL.replace(/\/api$/, "")}${itemURL}`;
+}

@@ -63,10 +63,9 @@ const addAuthInterceptor = () => {
                     const storedData = await getAuthData();
                     if (!storedData) throw new Error("No refresh token available");
 
-                    console.log("Called 1");
                     const response = await authService.refreshToken(storedData.refreshToken);
+                    console.log(response);
 
-                    console.log("Called 2");
                     if (!response?.data) {
                         console.log("Refresh token error: ", response);
                         return null;

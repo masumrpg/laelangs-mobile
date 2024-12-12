@@ -8,7 +8,7 @@ import { useToast } from "@/shared/hooks/useToast";
 import { Box } from "@/components/ui/box";
 import { useRouter } from "expo-router";
 
-const LocalAuthBiometric: React.FC = () => {
+const LocalAuthBiometric: React.FC<{ autoTrigger?: boolean }> = ({ autoTrigger = false }) => {
     const router = useRouter();
     const { authData, login } = useAuth();
     const { showToast } = useToast();
@@ -40,6 +40,12 @@ const LocalAuthBiometric: React.FC = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (autoTrigger && isBiometricSupported && authData?.refreshToken) {
+            handleBiometricAuth();
+        }
+    }, [autoTrigger, isBiometricSupported, authData]);
+
     if (!authData?.refreshToken) return null;
 
     const handleBiometricAuth = async () => {
@@ -61,6 +67,7 @@ const LocalAuthBiometric: React.FC = () => {
                     message: "Login Berhasil.",
                 });
             } else {
+                router.replace("/auth/login");
                 showToast({
                     type: "error",
                     title: "Error",
@@ -68,6 +75,7 @@ const LocalAuthBiometric: React.FC = () => {
                 });
             }
         } catch (error) {
+            router.replace("/auth/login");
             showToast({
                 type: "error",
                 title: "Error",
@@ -82,14 +90,14 @@ const LocalAuthBiometric: React.FC = () => {
             {isBiometricSupported
             && authData?.refreshToken
             && !isKeyboardVisible
-                ? (
-                    <TouchableOpacity
-                        onPress={handleBiometricAuth}
-                        className="bg-[#ffaa5b] p-4 rounded-full"
-                    >
-                        <Fingerprint size={50} color="#000" />
-                    </TouchableOpacity>
-                ) : null}
+            && !autoTrigger ? (
+                <TouchableOpacity
+                    onPress={handleBiometricAuth}
+                    className="bg-[#ffaa5b] p-4 rounded-full"
+                >
+                    <Fingerprint size={50} color="#000" />
+                </TouchableOpacity>
+            ) : null}
         </Box>
     );
 };

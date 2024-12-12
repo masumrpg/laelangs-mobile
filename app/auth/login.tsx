@@ -61,7 +61,7 @@ export default function Login() {
             </Box>
 
             {/*content*/}
-            <Box className={"h-full w-full px-5 justify-center items-center pt-28 gap-y-48"}>
+            <Box className={"h-full w-full px-5 justify-center items-center pt-32 gap-y-48"}>
                 <Box className={"flex items-center"}>
                     <Heading className="text-white text-6xl font-bold text-center">Login</Heading>
                 </Box>
@@ -69,11 +69,13 @@ export default function Login() {
                     <FormInput
                         className={"w-11/12 max-w-400 gap-y-5"} fields={fields}
                         form={form}
+                        isTitleNameActive={true}
                         onSubmit={handleLogin}
                         buttonName="Login"
                         inputClassName={"h-16 data-[focus=true]:border-[#ffaa5b]"}
                         buttonClassName={"h-16 rounded-xl"}
                         buttonTextClassName={"text-xl font-bold text-center text-white"}
+                        titleNameClassName={"text-[#ffaa5b] text-xl ml-2"}
                     />
                     <Text className="text-gray-500 text-xl text-center mt-8">
                         Belum punya akun?{" "}
@@ -83,7 +85,7 @@ export default function Login() {
                     </Text>
                 </Box>
             </Box>
-            <Box className={"absolute bottom-14 left-1/2 transform -translate-x-1/2"}>
+            <Box className={"absolute bottom-12 left-1/2 transform -translate-x-1/2"}>
                 <LocalAuthBiometric />
             </Box>
         </Box>

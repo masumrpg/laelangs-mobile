@@ -21,6 +21,7 @@ interface FormInputProps<T extends FieldValues> {
     buttonClassName?: string;
     buttonTextClassName?: string;
     isTitleNameActive?: boolean;
+    titleNameClassName?: string;
 }
 
 export default function FormInput<T extends FieldValues>({
@@ -37,8 +38,8 @@ export default function FormInput<T extends FieldValues>({
                                                              buttonClassName,
                                                              buttonTextClassName,
                                                              isTitleNameActive = false,
+                                                             titleNameClassName,
                                                          }: FormInputProps<T>) {
-    // Determining whether the form is valid and ready for submission
     const isFormInvalid = !form.formState.isValid || form.formState.isSubmitting;
 
     return (
@@ -50,8 +51,9 @@ export default function FormInput<T extends FieldValues>({
                     name={field}
                     render={({ field: { onChange, value }, fieldState }) => (
                         <Box className="gap-y-2 w-full">
+                            {/*Title*/}
                             {buttonName && isTitleNameActive && (
-                                <Text className="font-semibold text-primary-500">
+                                <Text className={cn("font-semibold text-primary-500", titleNameClassName)}>
                                     {formatCamelCaseToTitle(field)}
                                 </Text>
                             )}

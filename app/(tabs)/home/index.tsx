@@ -20,18 +20,20 @@ import { useRouter } from "expo-router";
 import { globalColors } from "@/shared/constant/constants";
 import LottieView from "lottie-react-native";
 import timeAnimation from "@/assets/lottie/time.json";
-import { useAuctions } from "@/feature/main/hooks/useAuctions";
+import { useAuctions } from "@/feature/auction/hooks/useAuctions";
 import Loader from "@/components/Loader";
-import { Auction } from "@/feature/main/schema";
+import { Auction } from "@/feature/auction/schema";
 import { buildFullURL, formatDateToIndonesian, formatRupiah } from "@/lib/utils";
 import { useResponsive } from "@/shared/hooks/useResponsive";
 import PullToRefresh from "@/components/PullToRefresh";
 import { baseURL } from "@/lib/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Index() {
     const router = useRouter();
     const { height } = useResponsive();
-    const { data: auctions, isLoading } = useAuctions();
+    const { data: auctions, isLoading, isFetching } = useAuctions();
+    const queryClient = useQueryClient();
 
     if (isLoading || !auctions?.data) return <Loader />;
 
@@ -87,11 +89,13 @@ export default function Index() {
     };
 
     const onRefresh = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, 2000);
-        });
+        try {
+            await queryClient.invalidateQueries({
+                queryKey: ["auctions"],
+            });
+        } catch (error) {
+            console.error("Failed to refresh auctions:", error);
+        }
     };
 
     return (
@@ -183,6 +187,8 @@ export default function Index() {
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     estimatedItemSize={10}
+                    onRefresh={onRefresh}
+                    refreshing={isFetching}
                     contentContainerStyle={{
                         paddingBottom: 16,
                     }}

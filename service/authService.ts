@@ -28,7 +28,6 @@ export const authService = {
             const { data } = await httpClientPublic.post<CommonResponse<AuthResponse>>("/auth/refresh-token", {
                 refreshToken: refreshToken,
             });
-            console.log(data);
             return data;
         } catch (error) {
             console.error("Failed to get refresh token: ", error);

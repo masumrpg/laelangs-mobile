@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import BidDetailScreen from "@/feature/main/components/BidDetailScreen";
-import { useAuction } from "@/feature/main/hooks/useAuctions";
+import BidDetailScreen from "@/feature/auction/components/BidDetailScreen";
+import { useAuction } from "@/feature/auction/hooks/useAuctions";
 import Loader from "@/components/Loader";
 
 export default function Index() {

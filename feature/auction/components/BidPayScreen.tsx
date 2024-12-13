@@ -3,11 +3,10 @@ import { Text } from "@/components/ui/text";
 import { formatRupiah } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
-import { TextInput } from "react-native";
 import { Divider } from "@/components/ui/divider";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Auction } from "@/feature/main/schema";
+import { Auction } from "@/feature/auction/schema";
 import PullToRefresh from "@/components/PullToRefresh";
 import ScreenLayout from "@/components/ScreenLayout";
 
@@ -16,21 +15,40 @@ interface BidPayScreenProps {
     className?: string;
 }
 
-const onRefresh = async () => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, 2000);
-    });
-};
 
 export default function BidPayScreen({ auction, className }: BidPayScreenProps) {
+    const paymentMethodList = ["Qris", "Gopay", "Shopee Pay"];
+    const [availableBid, setAvailableBid] = useState<number>(auction.lastPrice + auction.multiply);
+
+
+    const onRefresh = async () => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(true);
+            }, 2000);
+        });
+    };
+
+    const addBid = () => {
+        setAvailableBid((prevState) => prevState + auction.multiply);
+    };
+
+    const decreaseBid = () => {
+        setAvailableBid((prevState) => prevState - auction.multiply);
+    };
+
+    const handleBid = async () => {
+
+    };
+
+
     return (
         <PullToRefresh onRefresh={onRefresh}>
             <ScreenLayout className={className}>
                 {/* Product Details */}
                 <Box className="gap-y-2">
                     <Text className="text-2xl text-center font-bold">{auction.product.productName}</Text>
+                    <Text className="text-center">Penawaran Tertinggi</Text>
                     <Text
                         className="text-2xl text-center text-primary-500 font-semibold">{formatRupiah(auction.lastPrice.toString())}</Text>
                 </Box>
@@ -41,20 +59,24 @@ export default function BidPayScreen({ auction, className }: BidPayScreenProps) 
                         Bid Anda
                     </Heading>
 
-                    <TextInput
-                        className="mb-4 border border-primary-500 rounded-lg p-3"
-                        placeholder="Rp. 0"
-                        keyboardType="numeric"
-                        placeholderTextColor="#888"
-                        returnKeyType="done"
-                        clearButtonMode="while-editing"
-                        style={{
-                            minHeight: 50,
-                            fontSize: 16,
-                            paddingHorizontal: 15,
-                        }}
-                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}  // Increase touch area
-                    />
+                    <Heading bold size={"xl"} className="color-primary-500 text-center">
+                        {formatRupiah(availableBid.toString())}
+                    </Heading>
+
+                    <Box className="flex flex-row justify-center items-center gap-x-20">
+                        <Button onPress={decreaseBid}
+                                isDisabled={availableBid === auction.lastPrice + auction.multiply}>
+                            <Text className="text-white ">
+                                Kurangi
+                            </Text>
+                        </Button>
+                        <Button>
+                            <Text onPress={addBid} className="text-white ">
+                                Tambah
+                            </Text>
+                        </Button>
+
+                    </Box>
 
                     {/* Payment Methods */}
                     <Box className="flex-col mb-4">
@@ -63,7 +85,7 @@ export default function BidPayScreen({ auction, className }: BidPayScreenProps) 
                         </Heading>
                         <Divider className="my-0.5" />
                         <Box className="flex-col gap-y-2">
-                            {["Qris", "Gopay", "Shopee Pay"].map((method) => (
+                            {paymentMethodList.map((method) => (
                                 <React.Fragment key={method}>
                                     <Text className="text-gray-500">{method}</Text>
                                     <Divider className="my-0.5" />

@@ -3,15 +3,18 @@ import { Keyboard, TouchableOpacity } from "react-native";
 import * as LocalAuthentication from "expo-local-authentication";
 import { Fingerprint } from "lucide-react-native";
 import { useAuth } from "@/shared/contex/AuthContex";
-import { authService } from "@/service/authService";
 import { useToast } from "@/shared/hooks/useToast";
 import { Box } from "@/components/ui/box";
 import { useRouter } from "expo-router";
+import { useRefreshToken } from "@/feature/auth/hooks/useRefreshToken";
 
-const LocalAuthBiometric: React.FC<{ autoTrigger?: boolean }> = ({ autoTrigger = false }) => {
+const LocalAuthBiometric: React.FC<{
+    autoTrigger?: boolean
+}> = ({ autoTrigger = false }) => {
     const router = useRouter();
-    const { authData, login } = useAuth();
+    const { authData } = useAuth();
     const { showToast } = useToast();
+    const { refreshingToken } = useRefreshToken();
 
     const [isBiometricSupported, setIsBiometricSupported] = useState(false);
     const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
@@ -56,11 +59,7 @@ const LocalAuthBiometric: React.FC<{ autoTrigger?: boolean }> = ({ autoTrigger =
             });
 
             if (result.success) {
-                const response = await authService.refreshToken(authData.refreshToken);
-                if (response.data) {
-                    await login(response.data);
-                    router.replace("/home");
-                }
+                await refreshingToken(authData?.refreshToken);
                 showToast({
                     type: "success",
                     title: "Success",

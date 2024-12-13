@@ -21,6 +21,7 @@ export const globalColors = {
     primaryColor: "#88C273",
     secondaryColor: "#FFA24C",
     backgroundMuted: "#FFEDD5",
+    whiteColor: "#FFFFFF",
 };
 
 export const secureStoreKey = {

@@ -2,6 +2,7 @@ import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import httpClient from "@/lib/api";
 import { getAuthData, setAuthData } from "@/lib/secureStoreUtils";
 import { authService } from "@/service/authService";
+import { Router } from "expo-router";
 
 let isRefreshing = false;
 let failedQueue: {
@@ -20,7 +21,7 @@ const processQueue = (error: any, token: string | null = null) => {
     failedQueue = [];
 };
 
-const addAuthInterceptor = () => {
+const addAuthInterceptor = (router: Router) => {
     httpClient.interceptors.request.use(
         async (config: InternalAxiosRequestConfig) => {
             const authData = await getAuthData();
@@ -63,24 +64,25 @@ const addAuthInterceptor = () => {
                     const storedData = await getAuthData();
                     if (!storedData) throw new Error("No refresh token available");
 
-                    const response = await authService.refreshToken(storedData.refreshToken);
-                    console.log(response);
+                    try {
+                        const response = await authService.refreshToken(storedData.refreshToken);
+                        if (response.data) {
+                            const { accessToken, refreshToken } = response.data;
+                            const updatedAuthData = { ...storedData, accessToken, refreshToken };
 
-                    if (!response?.data) {
-                        console.log("Refresh token error: ", response);
+                            await setAuthData(updatedAuthData);
+                            processQueue(null, accessToken);
+
+                            if (originalRequest.headers) {
+                                originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                            }
+                            return httpClient(originalRequest);
+                        }
+                    } catch (error) {
+                        console.log("Refresh token error: ", error);
+                        router.replace("/auth/login");
                         return null;
                     }
-
-                    const { accessToken, refreshToken } = response.data;
-                    const updatedAuthData = { ...storedData, accessToken, refreshToken };
-
-                    await setAuthData(updatedAuthData);
-                    processQueue(null, accessToken);
-
-                    if (originalRequest.headers) {
-                        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-                    }
-                    return httpClient(originalRequest);
                 } catch (refreshError) {
                     processQueue(refreshError, null);
                     return Promise.reject(refreshError);

@@ -85,7 +85,7 @@ export default function Login() {
                     </Text>
                 </Box>
             </Box>
-            <Box className={"absolute bottom-12 left-1/2 transform -translate-x-1/2"}>
+            <Box className={"absolute bottom-10 left-1/2 transform -translate-x-1/2"}>
                 <LocalAuthBiometric />
             </Box>
         </Box>

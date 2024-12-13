@@ -1,4 +1,4 @@
-import { Auction } from "@/feature/main/schema";
+import { Auction } from "@/feature/auction/schema";
 import httpClient from "@/lib/api";
 import { CommonResponse } from "@/shared/schema";
 
@@ -19,6 +19,15 @@ export const auctionService = {
         } catch (error) {
             console.error("Failed to get One Auction", error);
             throw new Error("Failed to getOne Auction, please try again");
+        }
+    },
+    async createBid(id: string, payload: { bidAmount: number }) {
+        try {
+            const { data } = await httpClient.post<CommonResponse<any>>(`/auctions/${id}/bid`, payload);
+            return data;
+        } catch (error) {
+            console.error("Failed to create Bid", error);
+            throw new Error("Failed to create Bid, please try again");
         }
     },
 };

@@ -2,7 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import "@/global.css";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
@@ -29,9 +29,9 @@ configureReanimatedLogger({
     strict: false,
 });
 
-addAuthInterceptor();
 
 export default function RootLayout() {
+    const router = useRouter();
     const [loaded, error] = useFonts({
         SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
         ...FontAwesome.font,
@@ -39,6 +39,10 @@ export default function RootLayout() {
 
     const queryClient = new QueryClient();
 
+
+    addAuthInterceptor(router);
+
+    
     useEffect(() => {
         if (error) throw error;
     }, [error]);

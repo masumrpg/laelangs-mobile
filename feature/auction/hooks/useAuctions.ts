@@ -1,7 +1,7 @@
 import { useQuery, useMutation, UseQueryOptions, UseQueryResult, UseMutationOptions } from "@tanstack/react-query";
 import { auctionService } from "@/service/auctionService";
 import { AxiosError } from "axios";
-import { Auction } from "@/feature/main/schema";
+import { Auction } from "@/feature/auction/schema";
 import { CommonResponse } from "@/shared/schema";
 
 export const useAuctions = (
@@ -25,18 +25,13 @@ export const useAuction = (
     });
 };
 
-// export const useUpdateAuction = (
-//     options?: UseMutationOptions<void, AxiosError, { id: string; data: Partial<Auction> }>,
-// ) => {
-//     return useMutation(async ({ id, data }) => {
-//         await auctionService.update(id, data);
-//     }, options);
-// };
-//
-// export const useDeleteAuction = (
-//     options?: UseMutationOptions<void, AxiosError, string>,
-// ) => {
-//     return useMutation(async (id) => {
-//         await auctionService.delete(id);
-//     }, options);
-// };
+export const useCreateBid = (
+    options?: UseMutationOptions<CommonResponse<any>, AxiosError, { id: string; bidAmount: number }>,
+) => {
+    return useMutation({
+            mutationKey: ["auctions", "bid"],
+            mutationFn: async ({ id, bidAmount }) => await auctionService.createBid(id, { bidAmount }),
+            ...options,
+        },
+    );
+};

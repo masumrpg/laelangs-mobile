@@ -1,8 +1,39 @@
-import { useQuery, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
+import {
+    useMutation,
+    UseMutationOptions,
+    UseMutationResult,
+    useQuery,
+    UseQueryOptions,
+    UseQueryResult,
+} from "@tanstack/react-query";
 import { CommonResponse } from "@/shared/schema";
 import { AxiosError } from "axios";
-import { ProfileAddressesResponse } from "@/feature/profile/type";
+import { ProfileAddressesResponse, UserProfile } from "@/feature/profile/type";
 import { profileService } from "@/service/profileService";
+import { UserProfileSchema } from "@/feature/profile/schema";
+
+
+export const useCreateUserProfile = (
+    options?: UseMutationOptions<CommonResponse<UserProfile>, AxiosError, { formData: FormData }>,
+): UseMutationResult<CommonResponse<UserProfile>, AxiosError, { formData: FormData }> => {
+    return useMutation<CommonResponse<UserProfile>, AxiosError, { formData: FormData }>({
+        mutationKey: ["profile", "create"],
+        mutationFn: async ({ formData }) => {
+            return await profileService.create(formData);
+        },
+        ...options,
+    });
+};
+
+export const useUserProfile = (
+    options?: UseQueryOptions<CommonResponse<UserProfile>, AxiosError>,
+): UseQueryResult<CommonResponse<UserProfile>, AxiosError> => {
+    return useQuery<CommonResponse<UserProfile>, AxiosError>({
+        queryKey: ["profile", "me"],
+        queryFn: async () => await profileService.getMe(),
+        ...options,
+    });
+};
 
 export const useAddresses = (
     options?: UseQueryOptions<CommonResponse<ProfileAddressesResponse[]>, AxiosError>,

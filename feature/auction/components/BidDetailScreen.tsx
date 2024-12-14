@@ -3,22 +3,27 @@ import { Heading } from "@/components/ui/heading";
 import { Text } from "@/components/ui/text";
 import { cn, formatDateToIndonesian, formatRupiah } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import React, { useEffect } from "react";
-import { Auction, AuctionStatus, ProductCategory } from "@/feature/auction/schema";
+import React from "react";
+import { Auction, AuctionStatus, ProductCategory, UserBidSummary } from "@/feature/auction/type";
 import CarouselImage from "@/components/CarouselImage";
 import PullToRefresh from "@/components/PullToRefresh";
 import ScreenLayout from "@/components/ScreenLayout";
 
 interface BidScreenProps {
     auction: Auction;
+    userBid?: UserBidSummary;
     className?: string;
     handleInitialBid?: () => void;
     handleAdditionalBid?: () => void;
 }
 
-export default function BidDetailScreen({ auction, className, handleInitialBid, handleAdditionalBid }: BidScreenProps) {
-    const myDummyPrice = 200;
-
+export default function BidDetailScreen({
+                                            auction,
+                                            userBid,
+                                            className,
+                                            handleInitialBid,
+                                            handleAdditionalBid,
+                                        }: BidScreenProps) {
     const tableAuction = [
         // ["Kondisi", "Bekas"],
         ["Status", AuctionStatus.toLabel(auction.auctionStatus)],
@@ -67,29 +72,29 @@ export default function BidDetailScreen({ auction, className, handleInitialBid, 
 
                 {/*Bidding Status Section */}
                 {
-                    handleAdditionalBid && (
+                    handleAdditionalBid && userBid && (
                         <Box className={cn(
-                            myDummyPrice < Number(auction.lastPrice) ? "border-red-500" : "border-primary-500",
+                            userBid.totalBid < auction.lastPrice ? "border-red-500" : "border-primary-500",
                             "border rounded-md p-2 py-5 mb-4 gap-y-1.5",
                         )}>
                             <Text className={cn(
-                                myDummyPrice < Number(auction.lastPrice) ? "text-red-500" : "text-primary-500",
+                                userBid.totalBid < auction.lastPrice ? "text-red-500" : "text-primary-500",
                                 "text-center font-bold text-xl",
                             )}>
                                 {
-                                    myDummyPrice < Number(auction.lastPrice) ? "Bidding Lose" : "Anda yang tertinggi"
+                                    userBid.totalBid < auction.lastPrice ? "Bidding Lose" : "Anda yang tertinggi"
                                 }
                             </Text>
                             <Text
                                 className={cn(
-                                    myDummyPrice < Number(auction.lastPrice) ? "text-red-500" : "text-primary-500",
+                                    userBid.totalBid < auction.lastPrice ? "text-red-500" : "text-primary-500",
                                     "text-center font-bold text-2xl",
                                 )}
                             >
-                                {formatRupiah(myDummyPrice.toString())}
+                                {formatRupiah(userBid.totalBid.toString())}
                             </Text>
                             {
-                                myDummyPrice < Number(auction.lastPrice) && (
+                                userBid.totalBid < auction.lastPrice && (
                                     <Box className="flex-row justify-around mt-2">
                                         <Button onPress={handleAdditionalBid}>
                                             <Text className="text-white font-bold">Tambah</Text>

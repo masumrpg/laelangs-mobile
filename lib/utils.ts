@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { removeAuthData } from "@/lib/secureStoreUtils";
+import { baseURL } from "@/lib/api";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -74,8 +75,8 @@ export const formatDateToIndonesian = (dateString: string): string => {
     return formatter.format(date);
 };
 
-export function buildFullURL(baseURL: string, itemURL: string): string {
-    if (!baseURL || !itemURL) {
+export function buildFullURL(itemURL: string): string {
+    if (!itemURL) {
         throw new Error("baseURL and itemURL are required.");
     }
     return `${baseURL.replace(/\/api$/, "")}${itemURL}`;

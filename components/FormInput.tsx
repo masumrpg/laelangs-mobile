@@ -1,8 +1,7 @@
 import React, { ElementType } from "react";
-import { View } from "react-native";
 import { Controller, FieldValues, Path, UseFormReturn } from "react-hook-form";
 import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonText } from "@/components/ui/button";
 import { Text } from "react-native";
 import { cn, formatCamelCaseToTitle } from "@/lib/utils";
 import { Box } from "@/components/ui/box";
@@ -24,22 +23,23 @@ interface FormInputProps<T extends FieldValues> {
     titleNameClassName?: string;
 }
 
-export default function FormInput<T extends FieldValues>({
-                                                             fields,
-                                                             form,
-                                                             onSubmit,
-                                                             buttonName,
-                                                             iconBefore,
-                                                             iconAfter,
-                                                             onChangeValue,
-                                                             className,
-                                                             inputClassName,
-                                                             inputFieldClassName,
-                                                             buttonClassName,
-                                                             buttonTextClassName,
-                                                             isTitleNameActive = false,
-                                                             titleNameClassName,
-                                                         }: FormInputProps<T>) {
+export default function FormInput<T extends FieldValues>(
+    {
+        fields,
+        form,
+        onSubmit,
+        buttonName,
+        iconBefore,
+        iconAfter,
+        onChangeValue,
+        className,
+        inputClassName,
+        inputFieldClassName,
+        buttonClassName,
+        buttonTextClassName,
+        isTitleNameActive = false,
+        titleNameClassName,
+    }: FormInputProps<T>) {
     const isFormInvalid = !form.formState.isValid || form.formState.isSubmitting;
 
     return (
@@ -109,12 +109,12 @@ export default function FormInput<T extends FieldValues>({
                     )}
                     onPress={form.handleSubmit(onSubmit)}
                 >
-                    <Text className={cn(
+                    <ButtonText className={cn(
                         isFormInvalid ? "text-gray-500" : "text-white",
                         "font-bold text-center text-lg", buttonTextClassName,
                     )}>
                         {buttonName}
-                    </Text>
+                    </ButtonText>
                 </Button>
             )}
         </Box>

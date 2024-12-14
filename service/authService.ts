@@ -6,41 +6,21 @@ import { type RegisterSchema } from "@/feature/register/schema";
 
 export const authService = {
     async login(payload: LoginSchema) {
-        try {
-            const { data } = await httpClientPublic.post<CommonResponse<AuthResponse>>("/auth/login", payload);
-            return data;
-        } catch (error) {
-            console.error("Failed to login: ", error);
-            throw new Error("Failed to login, please try again");
-        }
+        const { data } = await httpClientPublic.post<CommonResponse<AuthResponse>>("/auth/login", payload);
+        return data;
     },
     async register(payload: RegisterSchema) {
-        try {
-            const { data } = await httpClientPublic.post<CommonResponse<null>>("/users", payload);
-            return data;
-        } catch (error) {
-            console.error("Failed to register: ", error);
-            throw new Error("Failed to register, please try again");
-        }
+        const { data } = await httpClientPublic.post<CommonResponse<null>>("/users", payload);
+        return data;
     },
     async refreshToken(refreshToken: string) {
-        try {
-            const { data } = await httpClientPublic.post<CommonResponse<AuthResponse>>("/auth/refresh-token", {
-                refreshToken: refreshToken,
-            });
-            return data;
-        } catch (error) {
-            console.error("Failed to get refresh token: ", error);
-            throw new Error("Failed to get RefreshToken, please try again");
-        }
+        const { data } = await httpClientPublic.post<CommonResponse<AuthResponse>>("/auth/refresh-token", {
+            refreshToken: refreshToken,
+        });
+        return data;
     },
     async logout() {
-        try {
-            const { data } = await httpClient.post<CommonResponse<any>>("/auth/logout");
-            return data;
-        } catch (error) {
-            console.error("Failed to logout: ", error);
-            throw new Error("Failed to logout, please try again");
-        }
+        const { data } = await httpClient.post<CommonResponse<any>>("/auth/logout");
+        return data;
     },
 };

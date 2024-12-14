@@ -22,7 +22,7 @@ import LottieView from "lottie-react-native";
 import timeAnimation from "@/assets/lottie/time.json";
 import { useAuctions } from "@/feature/auction/hooks/useAuctions";
 import Loader from "@/components/Loader";
-import { Auction } from "@/feature/auction/schema";
+import { Auction } from "@/feature/auction/type";
 import { buildFullURL, formatDateToIndonesian, formatRupiah } from "@/lib/utils";
 import { useResponsive } from "@/shared/hooks/useResponsive";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -43,7 +43,7 @@ export default function Index() {
 
     const renderItem = ({ item }: { item: Auction }) => {
         const imageUrl = item.product.images?.[0]?.url
-            ? buildFullURL(baseURL, item.product.images[0].url)
+            ? buildFullURL(item.product.images[0].url)
             : null;
 
         return (

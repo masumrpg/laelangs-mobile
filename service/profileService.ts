@@ -1,16 +1,24 @@
 import httpClient from "@/lib/api";
-import { CommonResponse } from "@/shared/schema";
-import { ProfileAddressesResponse } from "@/feature/profile/type";
+import { CommonResponse, PagingResponse } from "@/shared/schema";
+import { ProfileAddressesResponse, UserProfile } from "@/feature/profile/type";
 
 export const profileService = {
-    async create(payload: any) {
-        const { data } = await httpClient.post("/users/me", payload);
+    async create(formData: FormData) {
+        console.log("di service: ", formData);
+        try {
+            const { data } = await httpClient.post<CommonResponse<UserProfile>>("/users/me", formData, {});
+            console.log(data);
+            return data;
+        } catch (e) {
+            console.error("Error submitting form:", e);
+        }
+    },
+    async getMe() {
+        const { data } = await httpClient.get<CommonResponse<UserProfile>>("/users/me");
         return data;
     },
-    async update() {
-    },
     async getAllAddress() {
-        const { data } = await httpClient.get<CommonResponse<ProfileAddressesResponse[]>>("/users/me/address");
+        const { data } = await httpClient.get<PagingResponse<ProfileAddressesResponse[]>>("/users/me/address");
         return data;
     },
     async getAddress(id: string) {

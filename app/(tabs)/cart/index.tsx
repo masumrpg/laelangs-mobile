@@ -8,7 +8,7 @@ import { cn, formatRupiah } from "@/lib/utils";
 import { FlashList } from "@shopify/flash-list";
 import { useAuctions } from "@/feature/auction/hooks/useAuctions";
 import Loader from "@/components/Loader";
-import { Auction } from "@/feature/auction/schema";
+import { Auction } from "@/feature/auction/type";
 import { useRouter } from "expo-router";
 import ScreenLayout from "@/components/ScreenLayout";
 import PullToRefresh from "@/components/PullToRefresh";

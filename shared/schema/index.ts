@@ -7,6 +7,6 @@ export type CommonResponse<T> = {
 export type PagingResponse<T> = {
     status: number;
     message: string;
-    data?: T[];
+    data?: T;
     paging?: any;
 }

@@ -1,11 +1,12 @@
-import { Auction } from "@/feature/auction/schema";
+import { Auction, UserBidSummary } from "@/feature/auction/type";
 import httpClient from "@/lib/api";
-import { CommonResponse } from "@/shared/schema";
+import { CommonResponse, PagingResponse } from "@/shared/schema";
+import { BidSchema } from "@/feature/auction/schema";
 
 export const auctionService = {
     async getAll() {
         try {
-            const { data } = await httpClient.get<CommonResponse<Auction[]>>("/auctions");
+            const { data } = await httpClient.get<PagingResponse<Auction[]>>("/auctions");
             return data;
         } catch (error) {
             console.error("Failed to getAll Auction", error);
@@ -21,9 +22,15 @@ export const auctionService = {
             throw new Error("Failed to getOne Auction, please try again");
         }
     },
-    async createBid(id: string, payload: { bidAmount: number }) {
+    async getBid(id: string) {
+        const { data } = await httpClient.get<CommonResponse<UserBidSummary>>(`/auctions/${id}/bid/me`);
+        return data;
+    },
+    async createBid(id: string, payload: BidSchema) {
         try {
+            console.log(id, payload);
             const { data } = await httpClient.post<CommonResponse<any>>(`/auctions/${id}/bid`, payload);
+            console.log(data);
             return data;
         } catch (error) {
             console.error("Failed to create Bid", error);

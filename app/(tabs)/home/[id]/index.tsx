@@ -2,21 +2,33 @@ import React from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Loader from "@/components/Loader";
 import BidDetailScreen from "@/feature/auction/components/BidDetailScreen";
-import { useAuction } from "@/feature/auction/hooks/useAuctions";
+import { useAuction, useBid } from "@/feature/auction/hooks/useAuctions";
+import { useAddresses } from "@/feature/profile/hooks/useProfiles";
 
 export default function Index() {
-    const { id } = useLocalSearchParams();
+    const { id: auctionIdParam } = useLocalSearchParams();
     const router = useRouter();
-    const { data: auction, isLoading } = useAuction(id as string);
+    const { data: auction, isLoading: isAuctionLoading } = useAuction(auctionIdParam as string);
+    const { data: bid, isLoading: isBidLoading } = useBid(auctionIdParam as string);
 
-    if (isLoading || !auction?.data) {
-        return <Loader />;
-    }
+    if (isBidLoading) return <Loader />;
+
+
+    if (isAuctionLoading || !auction?.data) return <Loader />;
+
 
     const handleBid = () => {
-        router.push(`/home/${id}/bid`);
+        router.push(`/home/${auctionIdParam}/bid`);
     };
 
-    // TODO buat untuk nyocokin bid kita dengan id bid yang diklik
-    return <BidDetailScreen auction={auction.data} handleInitialBid={handleBid} />;
+    const handleAdditionalBid = () => {
+        router.push(`/home/${auctionIdParam}/bid`);
+    };
+
+    return <BidDetailScreen
+        auction={auction.data}
+        handleInitialBid={handleBid}
+        userBid={bid?.data}
+        handleAdditionalBid={handleAdditionalBid}
+    />;
 };

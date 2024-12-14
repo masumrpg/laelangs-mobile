@@ -8,3 +8,16 @@ export type ProfileAddressesResponse = {
     receiverName: string;
     phoneNumber: string;
 }
+
+export type UserProfile = {
+    username: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    gender: number;
+    birthDate: string;
+    image: {
+        id: string;
+        url: string;
+    };
+}

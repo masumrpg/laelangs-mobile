@@ -53,7 +53,7 @@ export default function CarouselImage({ images, classNames }: CarouselImageProps
                             >
                                 <Image
                                     className="w-full h-full"
-                                    source={{ uri: buildFullURL(baseURL, item.url) }}
+                                    source={{ uri: buildFullURL(item.url) }}
                                     resizeMode="cover"
                                 />
                             </Box>

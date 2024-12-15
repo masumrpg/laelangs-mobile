@@ -4,14 +4,13 @@ import { ProfileAddressesResponse, UserProfile } from "@/feature/profile/type";
 
 export const profileService = {
     async create(formData: FormData) {
-        console.log("di service: ", formData);
-        try {
-            const { data } = await httpClient.post<CommonResponse<UserProfile>>("/users/me", formData, {});
-            console.log(data);
-            return data;
-        } catch (e) {
-            console.error("Error submitting form:", e);
-        }
+        const { data } = await httpClient.post<CommonResponse<UserProfile>>("/users/me", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        console.log(data);
+        return data;
     },
     async getMe() {
         const { data } = await httpClient.get<CommonResponse<UserProfile>>("/users/me");

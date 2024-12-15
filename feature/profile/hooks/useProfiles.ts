@@ -2,7 +2,7 @@ import {
     useMutation,
     UseMutationOptions,
     UseMutationResult,
-    useQuery,
+    useQuery, useQueryClient,
     UseQueryOptions,
     UseQueryResult,
 } from "@tanstack/react-query";
@@ -10,16 +10,27 @@ import { CommonResponse } from "@/shared/schema";
 import { AxiosError } from "axios";
 import { ProfileAddressesResponse, UserProfile } from "@/feature/profile/type";
 import { profileService } from "@/service/profileService";
-import { UserProfileSchema } from "@/feature/profile/schema";
 
 
 export const useCreateUserProfile = (
     options?: UseMutationOptions<CommonResponse<UserProfile>, AxiosError, { formData: FormData }>,
 ): UseMutationResult<CommonResponse<UserProfile>, AxiosError, { formData: FormData }> => {
+    const queryClient = useQueryClient();
+
     return useMutation<CommonResponse<UserProfile>, AxiosError, { formData: FormData }>({
         mutationKey: ["profile", "create"],
         mutationFn: async ({ formData }) => {
             return await profileService.create(formData);
+        },
+        onSuccess: async (data, variables, context) => {
+            queryClient.setQueryData<CommonResponse<ProfileAddressesResponse[]>>(
+                ["addresses"],
+                (oldData) => {
+                    return oldData;
+                },
+            );
+
+            options?.onSuccess?.(data, variables, context);
         },
         ...options,
     });

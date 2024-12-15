@@ -26,7 +26,6 @@ import { Auction } from "@/feature/auction/type";
 import { buildFullURL, formatDateToIndonesian, formatRupiah } from "@/lib/utils";
 import { useResponsive } from "@/shared/hooks/useResponsive";
 import PullToRefresh from "@/components/PullToRefresh";
-import { baseURL } from "@/lib/api";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Index() {

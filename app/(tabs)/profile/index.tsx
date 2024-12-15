@@ -14,6 +14,7 @@ import LogoutDialog from "@/feature/profile/components/LogoutDialog";
 import { Divider } from "@/components/ui/divider";
 import AddressForm from "@/feature/profile/components/AddressForm";
 import ProfileForm from "@/feature/profile/components/ProfileForm";
+import { baseURL } from "@/lib/api";
 
 export default function Index() {
     const { showToast } = useToast();
@@ -23,6 +24,7 @@ export default function Index() {
     const { data: userAddresses, isLoading: isAddressesLoading } = useAddresses();
 
     if (isAddressesLoading || isProfileLoading) return <Loader />;
+    console.log(userProfile);
 
     const onRefresh = async () => {
         return new Promise((resolve) => {
@@ -54,7 +56,7 @@ export default function Index() {
                         <Box className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden mb-4">
                             {userProfile.data.image?.url ? (
                                 <Image
-                                    source={{ uri: buildFullURL(userProfile.data.image.url) }}
+                                    source={{ uri: baseURL + userProfile.data.image.url }}
                                     className="w-full h-full"
                                 />
                             ) : (
@@ -62,7 +64,6 @@ export default function Index() {
                             )}
                         </Box>
                         <Text className="text-xl font-bold">{userProfile.data.firstName}</Text>
-                        <Text className="text-xl font-bold">{userProfile.data.lastName}</Text>
                         <Text className="text-gray-600">{userProfile.data.email}</Text>
                     </Box>
 
@@ -88,10 +89,10 @@ export default function Index() {
                                 <Text className="text-gray-600 font-bold mb-1">Address</Text>
                                 <Text
                                     className="text-gray-600">
-                                    {userProfile.data.address ?? "Address not available"}
+                                    {userAddresses?.data ? userAddresses?.data[0]?.address : "Belum ada alamat"}
                                 </Text>
                             </Box>
-                            <AddressForm />
+                            <AddressForm buttonText={userAddresses?.data ? "Tambah" : "Lihat"} />
                         </Box>
                     </Box>
 

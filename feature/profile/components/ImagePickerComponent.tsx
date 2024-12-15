@@ -6,52 +6,42 @@ import { Button } from "@/components/ui/button";
 
 interface ImagePickerComponentProps {
     imageUri: string | null;
-    setImageUri: (uri: string | null) => void;
-    setImageFile: (file: File | null) => void;
+    setImageFile: (file: ImagePicker.ImagePickerAsset | null) => void;
     form: any;
 }
 
+const ALLOWED_MIME_TYPES = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
+
 const ImagePickerComponent: React.FC<ImagePickerComponentProps> = ({
                                                                        imageUri,
-                                                                       setImageUri,
                                                                        setImageFile,
                                                                        form,
                                                                    }) => {
     const handleImagePick = async () => {
-        // Request permission for image picker (needed for iOS)
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
             alert("Permission to access camera roll is required!");
             return;
         }
 
-        // Launch image picker
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ["images"],
             allowsEditing: true,
-            base64: false,
+
         });
 
         if (!result.canceled && result.assets?.[0]) {
             const image = result.assets[0];
 
-            if (image.uri) {
-                setImageUri(image.uri);
+            if (image.uri && image.mimeType) {
+                if (!ALLOWED_MIME_TYPES.includes(image.mimeType)) {
+                    alert("File type not supported. Please select a PNG, JPG, JPEG, or WEBP image.");
+                    return;
+                }
 
-                const fileName = image.fileName || "default_image.jpg";
-
-                // Convert the image to a File
-                const uri = image.uri;
-                fetch(uri)
-                    .then((res) => res.blob())
-                    .then((blob) => {
-                        const file = new File([blob], fileName, { type: image.type });
-                        setImageFile(file);
-                        form.setValue("image", file);
-                    })
-                    .catch((err) => console.error("Error converting image to File:", err));
+                setImageFile(image);
             } else {
-                console.error("Image URI is undefined or null.");
+                console.error("Image URI or MIME type is undefined or null.");
             }
         }
     };

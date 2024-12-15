@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { AuthResponse } from "@/feature/auth/schema";
 import { getAuthData, removeAuthData, setAuthData } from "@/lib/secureStoreUtils";
 import { usePathname } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
 
 type AuthContextType = {
     authData: AuthResponse | null;
@@ -14,6 +15,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const queryClient = useQueryClient();
     const pathname = usePathname();
     const [authData, setAuthDataState] = useState<AuthResponse | null>(null);
     const [loading, setLoading] = useState(true);
@@ -37,6 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const logout = async () => {
         await removeAuthData();
+        queryClient.clear();
         setAuthDataState(null);
     };
 

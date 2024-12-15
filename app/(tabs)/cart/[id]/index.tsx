@@ -8,13 +8,13 @@ export default function Index() {
     const { id } = useLocalSearchParams();
     const { data: auction, isLoading } = useAuction(id as string);
 
-    if (isLoading || !auction) return <Loader />;
+    if (isLoading || !auction?.data) return <Loader />;
 
     const handleAdditionalBid = () => {
         router.push(`/cart/${id}/bid`);
     };
 
     return (
-        <BidDetailScreen auction={auction} handleAdditionalBid={handleAdditionalBid} />
+        <BidDetailScreen auction={auction.data} handleAdditionalBid={handleAdditionalBid} />
     );
 }

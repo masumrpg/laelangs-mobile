@@ -18,9 +18,9 @@ export default function Index() {
     const [activeTab, setActiveTab] = useState("On Process");
     const tabs = ["Menang", "Kalah"];
 
-    const { data: auction, isLoading } = useAuctions();
+    const { data: auctions, isLoading } = useAuctions();
 
-    if (isLoading || !auction) return <Loader />;
+    if (isLoading || !auctions?.data) return <Loader />;
 
     const handleBid = (id: string) => {
         router.push(`/cart/${id}`);
@@ -44,14 +44,14 @@ export default function Index() {
 
                 {/* Details */}
                 <Box className="flex-1">
-                    <Text className="text-lg font-bold">{item.productName}</Text>
-                    <Text className="text-gray-500">{item.location}</Text>
+                    <Text className="text-lg font-bold">{item.product.productName}</Text>
+                    <Text className="text-gray-500">{item.auctionStatus}</Text>
                 </Box>
 
                 {/* Highest Bid */}
                 <Box className="text-lg font-bold text-primary-500">
                     <Text>
-                        {formatRupiah(item.lastPrice)}
+                        {formatRupiah(item.lastPrice.toString())}
                     </Text>
                 </Box>
             </Card>
@@ -104,7 +104,7 @@ export default function Index() {
 
                 {/* Auction Items */}
                 <FlashList
-                    data={auction}
+                    data={auctions.data}
                     renderItem={renderAuctionItem}
                     keyExtractor={(item) => item.id}
                     estimatedItemSize={100}

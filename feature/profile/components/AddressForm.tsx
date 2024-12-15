@@ -15,13 +15,17 @@ import { CreditCardIcon } from "lucide-react-native";
 import { FormControl, FormControlLabel, FormControlLabelText } from "@/components/ui/form-control";
 import React from "react";
 
-export default function AddressForm() {
+interface AddressFormProps {
+    buttonText: string;
+}
+
+export default function AddressForm({ buttonText }: AddressFormProps) {
     const [showActionsheet, setShowActionsheet] = useState(false);
     const handleClose = () => setShowActionsheet(false);
     return (
         <>
             <Button variant={"outline"} size={"xs"} className={"rounded-full"} onPress={() => setShowActionsheet(true)}>
-                <ButtonText>Tambah</ButtonText>
+                <ButtonText>{buttonText}</ButtonText>
             </Button>
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : undefined}

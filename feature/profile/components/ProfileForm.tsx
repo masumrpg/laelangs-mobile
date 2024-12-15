@@ -23,27 +23,26 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Heading } from "@/components/ui/heading";
 import ImagePickerComponent from "@/feature/profile/components/ImagePickerComponent";
 import { useCreateUserProfile } from "@/feature/profile/hooks/useProfiles";
-import { profileService } from "@/service/profileService"; // import expo-image-picker
+import { ImagePickerAsset } from "expo-image-picker";
+import { useToast } from "@/shared/hooks/useToast";
 
 export default function ProfileForm() {
+    const { showToast } = useToast();
     const form = useZodForm<UserProfileSchema>({
         schema: userProfileSchema,
         defaultValues: {},
     });
 
-    const { mutate, data: response } = useCreateUserProfile();
+    const { mutate } = useCreateUserProfile();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPicker, setShowPicker] = useState(false);
     const [tempDate, setTempDate] = useState<Date | null>(null);
 
-    const [imageUri, setImageUri] = useState<string | null>(null);
-    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [imageFile, setImageFile] = useState<ImagePickerAsset | null>(null);
 
     const onSubmit = async (data: UserProfileSchema) => {
         setIsSubmitting(true);
-
-        const formData = new FormData();
 
         const userProfile = {
             firstName: data.firstName,
@@ -52,16 +51,32 @@ export default function ProfileForm() {
             birthDate: data.birthDate,
         };
 
-        formData.append("userProfile", JSON.stringify(userProfile));
-
-        if (imageFile) {
-            formData.append("image", imageFile);
-        }
-
-        console.log("From profile", formData);
-
         try {
-            await profileService.create(formData);
+            const formData = new FormData();
+
+            formData.append("userProfile", JSON.stringify(userProfile));
+
+            if (imageFile?.uri && imageFile.mimeType && imageFile.fileName) {
+                const file = {
+                    uri: Platform.OS === "android" ? imageFile.uri : imageFile.uri.replace("file://", ""),
+                    type: imageFile.mimeType,
+                    name: imageFile.fileName,
+                };
+
+                formData.append("image", {
+                    uri: file.uri,
+                    name: file.name,
+                    type: file.type,
+                } as any);
+            }
+
+            const data = mutate({ formData });
+            console.log(data);
+            showToast({
+                type: "success",
+                title: "Success",
+                message: "Sukses update profile.",
+            });
         } catch (error) {
             console.error("Failed to submit data:", error);
         } finally {
@@ -78,8 +93,7 @@ export default function ProfileForm() {
 
             {/* Image Input */}
             <ImagePickerComponent
-                imageUri={imageUri}
-                setImageUri={setImageUri}
+                imageUri={imageFile?.uri ? imageFile.uri : null}
                 setImageFile={setImageFile}
                 form={form}
             />

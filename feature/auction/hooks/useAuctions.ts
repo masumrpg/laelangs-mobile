@@ -1,4 +1,4 @@
-import { useQuery, useMutation, UseQueryOptions, UseQueryResult, UseMutationOptions } from "@tanstack/react-query";
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
 import { auctionService } from "@/service/auctionService";
 import { AxiosError } from "axios";
 import { Auction, UserBidSummary } from "@/feature/auction/type";
@@ -6,11 +6,23 @@ import { CommonResponse, PagingResponse } from "@/shared/schema";
 import { BidSchema } from "@/feature/auction/schema";
 
 export const useAuctions = (
+    params?: {
+        page?: number;
+        size?: number;
+        sortBy?: string;
+        q?: string;
+        minPrice?: number;
+        maxPrice?: number;
+        category?: string;
+        dueDate?: string;
+    },
     options?: UseQueryOptions<PagingResponse<Auction[]>, AxiosError>,
 ): UseQueryResult<PagingResponse<Auction[]>, AxiosError> => {
     return useQuery<PagingResponse<Auction[]>, AxiosError>({
-        queryKey: ["auctions"],
-        queryFn: async () => await auctionService.getAll(),
+        queryKey: ["auctions", params],
+        queryFn: async () => {
+            return await auctionService.getAll(params);
+        },
         ...options,
     });
 };
@@ -26,13 +38,13 @@ export const useAuction = (
     });
 };
 
-export const useBid = (
+export const useBidMe = (
     auctionId: string,
     options?: UseQueryOptions<CommonResponse<UserBidSummary>, AxiosError>,
 ): UseQueryResult<CommonResponse<UserBidSummary>, AxiosError> => {
     return useQuery<CommonResponse<UserBidSummary>, AxiosError>({
         queryKey: ["auctions", "bid", auctionId],
-        queryFn: async () => await auctionService.getBid(auctionId),
+        queryFn: async () => await auctionService.getBidMe(auctionId),
         ...options,
     });
 };

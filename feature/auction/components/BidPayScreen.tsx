@@ -170,7 +170,7 @@ export default function BidPayScreen(
                                     <SelectInput
                                         className={"h-20 placeholder:text-black"}
                                         textContentType={"name"}
-                                        placeholder={"Pilih Kategori"}
+                                        placeholder={"Pilih Kurir"}
                                     />
                                     <ChevronDown size={16} color="black" />
                                 </SelectTrigger>
@@ -182,7 +182,7 @@ export default function BidPayScreen(
                                         </SelectDragIndicatorWrapper>
                                         {
                                             courierList.map((courier, index) => (
-                                                <SelectItem key={index} label={courier} value={courier} />
+                                                <SelectItem key={index} label={courier.toUpperCase()} value={courier} />
                                             ))
                                         }
                                     </SelectContent>
@@ -198,7 +198,7 @@ export default function BidPayScreen(
                         </Heading>
                         <Divider className="my-0.5" />
                         {
-                            userAddresses ?
+                            userAddresses?.length !== 0 ?
                                 (
                                     <Box className="flex-col gap-y-2">
                                         <Select onValueChange={value => setSelectedAddress(value)}>
@@ -217,7 +217,7 @@ export default function BidPayScreen(
                                                         <SelectDragIndicator />
                                                     </SelectDragIndicatorWrapper>
                                                     {
-                                                        userAddresses.map((address) => (
+                                                        userAddresses?.map((address) => (
                                                             <SelectItem key={address.id} label={address.address}
                                                                         value={address.id} />
                                                         ))
@@ -229,7 +229,8 @@ export default function BidPayScreen(
                                 ) : (
                                     // FIXME masih error
                                     <Box className="mt-4">
-                                        <AddressForm />
+                                        <AddressForm
+                                            buttonText={"Tambah Alamat"} />
                                     </Box>
                                 )
                         }

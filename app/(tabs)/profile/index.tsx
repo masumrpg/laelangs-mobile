@@ -1,7 +1,6 @@
 import React from "react";
 import { Image, Text } from "react-native";
 import { Box } from "@/components/ui/box";
-import { Button, ButtonText } from "@/components/ui/button";
 import ScreenLayout from "@/components/ScreenLayout";
 import PullToRefresh from "@/components/PullToRefresh";
 import { authService } from "@/service/authService";
@@ -24,7 +23,6 @@ export default function Index() {
     const { data: userAddresses, isLoading: isAddressesLoading } = useAddresses();
 
     if (isAddressesLoading || isProfileLoading) return <Loader />;
-    console.log(userProfile);
 
     const onRefresh = async () => {
         return new Promise((resolve) => {
@@ -48,15 +46,15 @@ export default function Index() {
 
 
     return (
-        <PullToRefresh onRefresh={onRefresh}>
+        <ScreenLayout className={"mb-10"}>
             {userProfile?.data ? (
-                <ScreenLayout className={"mb-10"}>
+                <PullToRefresh onRefresh={onRefresh}>
                     {/* Avatar Section */}
                     <Box className="items-center mb-6">
                         <Box className="w-24 h-24 bg-gray-200 rounded-full overflow-hidden mb-4">
                             {userProfile.data.image?.url ? (
                                 <Image
-                                    source={{ uri: baseURL + userProfile.data.image.url }}
+                                    source={{ uri: buildFullURL(userProfile.data.image.url) }}
                                     className="w-full h-full"
                                 />
                             ) : (
@@ -101,20 +99,20 @@ export default function Index() {
 
                     <Box className={"gap-y-4"}>
                         {/* Edit Profile Button */}
-                        <Button className={"rounded-full"}>
-                            <ButtonText>Edit Profile</ButtonText>
-                        </Button>
+                        {/*<Button className={"rounded-full"}>*/}
+                        {/*    <ButtonText>Edit Profile</ButtonText>*/}
+                        {/*</Button>*/}
 
                         {/* Log Out */}
                         <LogoutDialog logoutHandle={logoutHandle} />
                     </Box>
-                </ScreenLayout>
+                </PullToRefresh>
             ) : (
                 // Create User Profile
                 <ScreenLayout className={"mb-10"}>
                     <ProfileForm />
                 </ScreenLayout>
             )}
-        </PullToRefresh>
+        </ScreenLayout>
     );
 }

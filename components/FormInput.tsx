@@ -21,6 +21,7 @@ interface FormInputProps<T extends FieldValues> {
     buttonTextClassName?: string;
     isTitleNameActive?: boolean;
     titleNameClassName?: string;
+    additionalUsernameLabel?: string;
 }
 
 export default function FormInput<T extends FieldValues>(
@@ -39,6 +40,7 @@ export default function FormInput<T extends FieldValues>(
         buttonTextClassName,
         isTitleNameActive = false,
         titleNameClassName,
+        additionalUsernameLabel,
     }: FormInputProps<T>) {
     const isFormInvalid = !form.formState.isValid || form.formState.isSubmitting;
 
@@ -54,7 +56,7 @@ export default function FormInput<T extends FieldValues>(
                             {/*Title*/}
                             {buttonName && isTitleNameActive && (
                                 <Text className={cn("font-semibold text-primary-500", titleNameClassName)}>
-                                    {formatCamelCaseToTitle(field)}
+                                    {additionalUsernameLabel && field === "username" ? `${formatCamelCaseToTitle(field)} or ${additionalUsernameLabel}` : formatCamelCaseToTitle(field)}
                                 </Text>
                             )}
                             <Input className={cn(

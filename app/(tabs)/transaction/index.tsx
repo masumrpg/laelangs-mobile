@@ -114,8 +114,7 @@ export default function Index() {
 
                     {/* Amount */}
                     <Text className="text-lg font-bold text-primary-500">
-                        {/*{formatRupiah(item.amount.toString())}*/}
-                        {item.amount}
+                        {formatRupiah(item.amount.toString())}
                     </Text>
                 </Card>
             </TouchableOpacity>
@@ -132,8 +131,8 @@ export default function Index() {
     };
 
     return (
-        <PullToRefresh onRefresh={onRefresh}>
-            <ScreenLayout>
+        <ScreenLayout>
+            <PullToRefresh onRefresh={onRefresh}>
                 {/* Tabs */}
                 <Box className="flex-row mb-4 gap-x-3">
                     {tabs.map((tab) => (
@@ -175,7 +174,7 @@ export default function Index() {
                         </Box>
                     )}
                 />
-            </ScreenLayout>
-        </PullToRefresh>
+            </PullToRefresh>
+        </ScreenLayout>
     );
 }

@@ -8,7 +8,7 @@ const useHideTabBar = () => {
     const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
     const pathname = usePathname();
 
-    const hiddenPaths = ["/home/", "/cart/", "/profile/", "/transaction/"];
+    const hiddenPaths = ["/home/", "/cart/", "/profile/", "/transaction/", "/search"];
 
     useEffect(() => {
         const keyboardDidShowListener = Keyboard.addListener("keyboardDidShow", () => {

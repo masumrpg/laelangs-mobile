@@ -1,6 +1,6 @@
 import httpClient from "@/lib/api";
 import { PagingResponse } from "@/shared/schema";
-import { Bank, Category } from "@/feature/config/type";
+import { Bank, Category, City, Province } from "@/feature/config/type";
 
 export const configService = {
     async getAllBanks() {
@@ -9,6 +9,14 @@ export const configService = {
     },
     async getAllCategories() {
         const { data } = await httpClient.get<PagingResponse<Category[]>>("/config/categories");
+        return data;
+    },
+    async getAllCity() {
+        const { data } = await httpClient.get<PagingResponse<City[]>>("/config/cities");
+        return data;
+    },
+    async getAllProvince() {
+        const { data } = await httpClient.get<PagingResponse<Province[]>>("/config/provinces");
         return data;
     },
 };

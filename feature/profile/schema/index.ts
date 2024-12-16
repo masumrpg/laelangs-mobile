@@ -26,7 +26,14 @@ export type UserProfileSchema = z.infer<typeof userProfileSchema>;
 
 
 export const addressSchema = z.object({
-    address: z.string().min(5, "Alamat minimal 5 karakter!"),
-    province: z.string().min(5, "Provinsi minimal 5 karakter!"),
-    city: z.string().min(4, "Kota minimal 4 karakter!"),
+    address: z.string().min(1, { message: "Alamat tidak boleh kosong" }),
+    province: z.string().min(1, { message: "Provinsi tidak boleh kosong" }),
+    city: z.string().min(1, { message: "Kota tidak boleh kosong" }),
+    district: z.string().min(1, { message: "Kecamatan tidak boleh kosong" }),
+    zipCode: z.string().length(5, { message: "Kode pos harus 5 digit" }),
+    receiverName: z.string().min(1, { message: "Nama penerima harus ada" }),
+    phoneNumber: z.string()
+        .regex(/^[0-9]{8,15}$/, { message: "Nomor ponsel harus 8-15 digit" }),
 });
+
+export type AddressSchema = z.infer<typeof addressSchema>;

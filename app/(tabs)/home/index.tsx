@@ -2,18 +2,7 @@ import React from "react";
 import { Image, TouchableOpacity, TextInput, Text, View } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Box } from "@/components/ui/box";
-import {
-    Select,
-    SelectBackdrop,
-    SelectContent,
-    SelectDragIndicator,
-    SelectDragIndicatorWrapper,
-    SelectInput,
-    SelectItem,
-    SelectPortal,
-    SelectTrigger,
-} from "@/components/ui/select";
-import { ChevronDown, MapPin, Search } from "lucide-react-native";
+import { MapPin, Search } from "lucide-react-native";
 import { Heading } from "@/components/ui/heading";
 import { Card } from "@/components/ui/card";
 import { useRouter } from "expo-router";
@@ -27,14 +16,18 @@ import { buildFullURL, formatDateToIndonesian, formatRupiah } from "@/lib/utils"
 import { useResponsive } from "@/shared/hooks/useResponsive";
 import PullToRefresh from "@/components/PullToRefresh";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAddresses, useUserProfile } from "@/feature/profile/hooks/useProfiles";
 
 export default function Index() {
     const router = useRouter();
     const { height } = useResponsive();
     const { data: auctions, isLoading, isFetching } = useAuctions();
+    const { data: userProfile, isLoading: isUserProfileLoading } = useUserProfile();
+    const { data: userAddresses, isLoading: isAddressesLoading } = useAddresses();
+
     const queryClient = useQueryClient();
 
-    if (isLoading || !auctions?.data) return <Loader />;
+    if (isLoading || isUserProfileLoading || isAddressesLoading) return <Loader />;
 
     const handleItem = (id: string) => {
         router.push(`/home/${id}`);
@@ -126,21 +119,26 @@ export default function Index() {
                 </Box>
 
                 <Box>
-                    <Heading bold size={"xl"}>Ma'sum</Heading>
+                    <Heading bold
+                             size={"xl"}>{userProfile?.data?.firstName ? userProfile?.data?.firstName : "Halo Laelangers"}</Heading>
                     <Box className={"flex flex-row gap-x-1 items-center"}>
-                        <Text className={"w-fit text-lg font-semibold"}>Jawa Tengah, Kebumen</Text>
+                        <Text
+                            className={"w-fit text-lg font-semibold"}>{userAddresses?.data?.[0]?.address ?? "Alam Semesta"}</Text>
                         <MapPin size={10} color={"black"} />
                     </Box>
                 </Box>
 
-                <Box className="flex-row items-center bg-white/50 rounded-xl p-3 py-1">
-                    <TextInput
-                        placeholder="Search"
-                        className="flex-1 mr-2 text-base text-gray-700"
-                        autoCapitalize="none"
-                    />
-                    <Search size={20} color="black" />
-                </Box>
+                <TouchableOpacity onPress={() => router.push("/(tabs)/search")}>
+                    <Box className="flex-row items-center bg-white/50 rounded-xl p-3 py-1">
+                        <TextInput
+                            placeholder="Temukan Barangmu"
+                            className="flex-1 mr-2 text-base text-gray-700"
+                            autoCapitalize="none"
+                            editable={false}
+                        />
+                        <Search size={20} color="black" />
+                    </Box>
+                </TouchableOpacity>
             </Box>
             <Box className="flex-1 px-5 pb-16">
                 {/* Banner */}
@@ -157,32 +155,9 @@ export default function Index() {
                     Bid Barang Kesukaanmu Sekarang!
                 </Heading>
 
-                {/* Filter Dropdown */}
-                <Select>
-                    <SelectTrigger className={"w-48 items-center mb-4 border-transparent"}>
-                        <SelectInput
-                            className={"h-20 placeholder:text-black"}
-                            textContentType={"name"}
-                            placeholder={"Pilih Kategori"}
-                        />
-                        <ChevronDown size={16} color="black" />
-                    </SelectTrigger>
-                    <SelectPortal>
-                        <SelectBackdrop />
-                        <SelectContent>
-                            <SelectDragIndicatorWrapper>
-                                <SelectDragIndicator />
-                            </SelectDragIndicatorWrapper>
-                            <SelectItem label={"Electronic"} value={"Electronic"} />
-                            <SelectItem label={"Fashion"} value={"Fashion"} />
-                            <SelectItem label={"Kendaraan"} value={"Kendaraan"} />
-                        </SelectContent>
-                    </SelectPortal>
-                </Select>
-
                 {/* Item List */}
                 <FlashList
-                    data={auctions.data}
+                    data={auctions?.data}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
                     estimatedItemSize={10}
@@ -205,6 +180,7 @@ export default function Index() {
                         </View>
                     }
                 />
+
             </Box>
         </PullToRefresh>
     );

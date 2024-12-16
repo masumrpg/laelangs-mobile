@@ -76,6 +76,7 @@ export default function Login() {
                         buttonClassName={"h-16 rounded-xl"}
                         buttonTextClassName={"text-xl font-bold text-center text-white"}
                         titleNameClassName={"text-[#ffaa5b] text-xl ml-2"}
+                        additionalUsernameLabel={"Email"}
                     />
                     <Text className="text-gray-500 text-xl text-center mt-8">
                         Belum punya akun?{" "}

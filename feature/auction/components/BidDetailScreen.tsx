@@ -64,13 +64,13 @@ export default function BidDetailScreen({
                         Bid Barang Kesukaanmu Sekarang!
                     </Text>
                     <Text className="text-gray-600 text-sm">
-                        Jika Anda ingin menggunakan Dictionary dengan kunci yang unik, Anda
-                        bisa menyimpan ID sebagai kunci utama dan Dictionary properti karyawan
-                        sebagai nilainya:
+                        Temukan berbagai barang menarik yang bisa kamu miliki dengan harga terbaik!
+                        Segera ikuti lelang dan bid barang impianmu sebelum orang lain melakukannya.
+                        Jangan lewatkan kesempatan untuk mendapatkan barang berkualitas dengan harga terjangkau.
                     </Text>
                 </Box>
 
-                {/*Bidding Status Section */}
+                {/* Bidding Status Section */}
                 {
                     handleAdditionalBid && userBid && (
                         <Box className={cn(
@@ -122,6 +122,23 @@ export default function BidDetailScreen({
                             <Text className="text-black font-medium">{value}</Text>
                         </Box>
                     ))}
+                </Box>
+
+                {/* Pelelang Information Section */}
+                <Box className="border border-gray-300 rounded-md mb-4 p-4">
+                    <Heading size="lg" className="mb-2">Informasi Pelelang</Heading>
+                    <Box className="flex-row justify-between mb-2">
+                        <Text className="text-gray-600">Nama Pelelang</Text>
+                        <Text className="font-medium">Joko</Text>
+                    </Box>
+                    <Box className="flex-row justify-between mb-2">
+                        <Text className="text-gray-600">Kontak</Text>
+                        <Text className="font-medium">Kontak</Text>
+                    </Box>
+                    <Box className="flex-row justify-between">
+                        <Text className="text-gray-600">Alamat</Text>
+                        <Text className="font-medium">Alamat Seler</Text>
+                    </Box>
                 </Box>
 
                 {/* Note Section */}

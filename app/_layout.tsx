@@ -42,7 +42,7 @@ export default function RootLayout() {
 
     addAuthInterceptor(router);
 
-    
+
     useEffect(() => {
         if (error) throw error;
     }, [error]);

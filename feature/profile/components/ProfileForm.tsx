@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Controller } from "react-hook-form";
 import { useZodForm } from "@/shared/hooks/useZodForm";
 import { UserProfileSchema, userProfileSchema } from "@/feature/profile/schema";
-import { Platform, Text, Image } from "react-native";
+import { Platform, Text } from "react-native";
 import { Input, InputField } from "@/components/ui/input";
 import {
     Select,
@@ -25,8 +25,10 @@ import ImagePickerComponent from "@/feature/profile/components/ImagePickerCompon
 import { useCreateUserProfile } from "@/feature/profile/hooks/useProfiles";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useToast } from "@/shared/hooks/useToast";
+import { useRouter } from "expo-router";
 
 export default function ProfileForm() {
+    const router = useRouter();
     const { showToast } = useToast();
     const form = useZodForm<UserProfileSchema>({
         schema: userProfileSchema,
@@ -70,12 +72,18 @@ export default function ProfileForm() {
                 } as any);
             }
 
-            const data = mutate({ formData });
-            console.log(data);
-            showToast({
-                type: "success",
-                title: "Success",
-                message: "Sukses update profile.",
+            mutate({ formData }, {
+                onSuccess: () => {
+                    showToast({
+                        type: "success",
+                        title: "Success",
+                        message: "Sukses update profile.",
+                    });
+                    router.replace("/profile");
+                },
+                onError: (error) => {
+                    console.log("error", error);
+                },
             });
         } catch (error) {
             console.error("Failed to submit data:", error);
@@ -95,7 +103,6 @@ export default function ProfileForm() {
             <ImagePickerComponent
                 imageUri={imageFile?.uri ? imageFile.uri : null}
                 setImageFile={setImageFile}
-                form={form}
             />
 
             {/* Other form fields */}

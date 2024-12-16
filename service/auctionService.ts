@@ -4,9 +4,18 @@ import { CommonResponse, PagingResponse } from "@/shared/schema";
 import { BidSchema } from "@/feature/auction/schema";
 
 export const auctionService = {
-    async getAll() {
+    async getAll(params?: {
+        page?: number;
+        size?: number;
+        sortBy?: string;
+        query?: string;
+        minPrice?: number;
+        maxPrice?: number;
+        category?: string;
+        dueDate?: string;
+    }) {
         try {
-            const { data } = await httpClient.get<PagingResponse<Auction[]>>("/auctions");
+            const { data } = await httpClient.get<PagingResponse<Auction[]>>("/auctions", { params });
             return data;
         } catch (error) {
             console.error("Failed to getAll Auction", error);
@@ -22,7 +31,7 @@ export const auctionService = {
             throw new Error("Failed to getOne Auction, please try again");
         }
     },
-    async getBid(id: string) {
+    async getBidMe(id: string) {
         const { data } = await httpClient.get<CommonResponse<UserBidSummary>>(`/auctions/${id}/bid/me`);
         return data;
     },

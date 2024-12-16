@@ -6,31 +6,20 @@ import {
     UseQueryOptions,
     UseQueryResult,
 } from "@tanstack/react-query";
-import { CommonResponse } from "@/shared/schema";
+import { CommonResponse, PagingResponse } from "@/shared/schema";
 import { AxiosError } from "axios";
 import { ProfileAddressesResponse, UserProfile } from "@/feature/profile/type";
 import { profileService } from "@/service/profileService";
+import { AddressSchema } from "@/feature/profile/schema";
 
 
 export const useCreateUserProfile = (
     options?: UseMutationOptions<CommonResponse<UserProfile>, AxiosError, { formData: FormData }>,
 ): UseMutationResult<CommonResponse<UserProfile>, AxiosError, { formData: FormData }> => {
-    const queryClient = useQueryClient();
-
     return useMutation<CommonResponse<UserProfile>, AxiosError, { formData: FormData }>({
         mutationKey: ["profile", "create"],
         mutationFn: async ({ formData }) => {
-            return await profileService.create(formData);
-        },
-        onSuccess: async (data, variables, context) => {
-            queryClient.setQueryData<CommonResponse<ProfileAddressesResponse[]>>(
-                ["addresses"],
-                (oldData) => {
-                    return oldData;
-                },
-            );
-
-            options?.onSuccess?.(data, variables, context);
+            return await profileService.createProfile(formData);
         },
         ...options,
     });
@@ -47,11 +36,35 @@ export const useUserProfile = (
 };
 
 export const useAddresses = (
-    options?: UseQueryOptions<CommonResponse<ProfileAddressesResponse[]>, AxiosError>,
-): UseQueryResult<CommonResponse<ProfileAddressesResponse[]>, AxiosError> => {
-    return useQuery<CommonResponse<ProfileAddressesResponse[]>, AxiosError>({
+    options?: UseQueryOptions<PagingResponse<ProfileAddressesResponse[]>, AxiosError>,
+): UseQueryResult<PagingResponse<ProfileAddressesResponse[]>, AxiosError> => {
+    return useQuery<PagingResponse<ProfileAddressesResponse[]>, AxiosError>({
         queryKey: ["addresses"],
         queryFn: async () => await profileService.getAllAddress(),
+        ...options,
+    });
+};
+
+export const useCreateAddress = (
+    options?: UseMutationOptions<CommonResponse<ProfileAddressesResponse>, AxiosError, { payload: AddressSchema }>,
+): UseMutationResult<CommonResponse<ProfileAddressesResponse>, AxiosError, { payload: AddressSchema }> => {
+    const queryClient = useQueryClient();
+
+    return useMutation<CommonResponse<ProfileAddressesResponse>, AxiosError, { payload: AddressSchema }>({
+        mutationKey: ["addresses", "create"],
+        mutationFn: async ({ payload }) => {
+            return await profileService.createAddress(payload);
+        },
+        onSuccess: async (data, variables, context) => {
+            queryClient.setQueryData<CommonResponse<ProfileAddressesResponse[]>>(
+                ["addresses"],
+                (oldData) => {
+                    return oldData;
+                },
+            );
+
+            options?.onSuccess?.(data, variables, context);
+        },
         ...options,
     });
 };

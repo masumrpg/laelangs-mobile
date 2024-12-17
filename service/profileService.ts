@@ -10,7 +10,6 @@ export const profileService = {
                 "Content-Type": "multipart/form-data",
             },
         });
-        console.log(data);
         return data;
     },
     async getMe() {

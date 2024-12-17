@@ -36,10 +36,14 @@ export default function Index() {
     }
 
     return isOnboardingComplete ? (
-        authData?.accessToken !== "" || null || undefined
+        authData?.refreshToken !== "" || null || undefined
             ?
-            (isBiometricSupported ? <LocalAuthBiometric autoTrigger={true} />
-                : <Redirect href="/(tabs)/home" />)
+            (
+                // FIXME Local auth
+                // isBiometricSupported ?
+                //     <LocalAuthBiometric autoTrigger={true} /> :
+                <Redirect href="/(tabs)/home" />
+            )
             :
             <Redirect href="/auth/login" />) : <Redirect href="/onboarding" />;
 }

@@ -34,10 +34,6 @@ export default function Index() {
         category: filters.category,
     });
 
-    useEffect(() => {
-        console.log(auctions);
-    }, [auctions]);
-
     const onRefresh = async () => {
         return new Promise((resolve) => {
             setTimeout(() => {
@@ -89,39 +85,39 @@ export default function Index() {
 
     return (
         <ScreenLayout>
-            <PullToRefresh onRefresh={onRefresh}>
-                <Box className="flex-row items-center mb-4 gap-x-2">
-                    <TextInput
-                        className="flex-1 border border-gray-300 rounded-lg p-3"
-                        placeholder="Cari"
-                        value={filters.q}
-                        onChangeText={(text) => setFilters((prev) => ({ ...prev, q: text }))}
-                    />
-                    <Pressable onPress={async () => {
-                        setFilterVisible(true);
-                        await queryClient.invalidateQueries({ queryKey: ["auctions", filters.q] });
-                    }} className="p-3 rounded-lg border border-gray-300">
-                        <Filter size={18} color="black" />
-                    </Pressable>
-                </Box>
+            <Box className="flex-row items-center mb-4 gap-x-2">
+                <TextInput
+                    className="flex-1 border border-gray-300 rounded-lg p-3"
+                    placeholder="Cari"
+                    value={filters.q}
+                    onChangeText={(text) => setFilters((prev) => ({ ...prev, q: text }))}
+                />
+                <Pressable onPress={async () => {
+                    setFilterVisible(true);
+                    await queryClient.invalidateQueries({ queryKey: ["auctions", filters.q] });
+                }} className="p-3 rounded-lg border border-gray-300">
+                    <Filter size={18} color="black" />
+                </Pressable>
+            </Box>
 
-                {/* Display active filters */}
-                <Box className="flex-row flex-wrap mb-4 gap-2">
-                    {Object.entries(filters)
-                        .filter(([key, value]) => value)
-                        .map(([key, value]) => (
-                            <Box key={key} className="flex-row items-center bg-gray-200 px-3 py-1 rounded-full">
-                                <Text className="mr-2 text-sm">{`${key}: ${value}`}</Text>
-                                <Pressable onPress={() => clearFilter(key)}>
-                                    <Text className="text-sm text-red-500">X</Text>
-                                </Pressable>
-                            </Box>
-                        ))}
-                </Box>
+            {/* Display active filters */}
+            <Box className="flex-row flex-wrap mb-4 gap-2">
+                {Object.entries(filters)
+                    .filter(([key, value]) => value)
+                    .map(([key, value]) => (
+                        <Box key={key} className="flex-row items-center bg-gray-200 px-3 py-1 rounded-full">
+                            <Text className="mr-2 text-sm">{`${key}: ${value}`}</Text>
+                            <Pressable onPress={() => clearFilter(key)}>
+                                <Text className="text-sm text-red-500">X</Text>
+                            </Pressable>
+                        </Box>
+                    ))}
+            </Box>
 
-                {isAuctionLoading || !auctions?.data ? (
-                    <Loader />
-                ) : (
+            {isAuctionLoading || !auctions?.data ? (
+                <Loader />
+            ) : (
+                <PullToRefresh onRefresh={onRefresh}>
                     <FlashList
                         data={auctions?.data}
                         renderItem={renderItem}
@@ -134,15 +130,15 @@ export default function Index() {
                             </Box>
                         }
                     />
-                )}
-                <FilterModal
-                    visible={filterVisible}
-                    filters={filters}
-                    setFilters={setFilters}
-                    onApply={applyFilters}
-                    onClose={() => setFilterVisible(false)}
-                />
-            </PullToRefresh>
+                </PullToRefresh>
+            )}
+            <FilterModal
+                visible={filterVisible}
+                filters={filters}
+                setFilters={setFilters}
+                onApply={applyFilters}
+                onClose={() => setFilterVisible(false)}
+            />
         </ScreenLayout>
     );
 }

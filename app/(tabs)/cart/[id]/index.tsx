@@ -10,9 +10,7 @@ export default function Index() {
     const { data: myBidAuctions, isLoading: isMyBidAuctions } = useMyBidAuctions();
 
     if (isLoading || !auction?.data || isMyBidAuctions) return <Loader />;
-
-    console.log("My Bid Auction", myBidAuctions);
-
+    
     const handleAdditionalBid = () => {
         router.push(`/cart/${id}/bid`);
     };

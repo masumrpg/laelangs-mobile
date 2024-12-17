@@ -3,7 +3,7 @@ import { Image, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
 import { Card } from "@/components/ui/card";
-import { cn, formatRupiah } from "@/lib/utils";
+import { buildFullURL, cn, formatDateToIndonesian, formatRupiah } from "@/lib/utils";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -11,71 +11,31 @@ import { Badge, BadgeText } from "@/components/ui/badge";
 import ScreenLayout from "@/components/ScreenLayout";
 import { useAllTransactions } from "@/feature/transaction/hooks/useTransaction";
 import Loader from "@/components/Loader";
-
-const tabs = ["All", "Success", "Failed"] as const;
-type TabType = typeof tabs[number];
-
-const tabLabels: Record<TabType, string> = {
-    All: "Semua",
-    Success: "Berhasil",
-    Failed: "Gagal",
-};
-
-interface Transaction {
-    id: string;
-    productName: string;
-    status: "Success" | "Failed";
-    date: string;
-    amount: number;
-}
-
-const mockTransactions: Transaction[] = [
-    {
-        id: "1",
-        productName: "Vintage Camera",
-        status: "Success",
-        date: "12 Dec 2023",
-        amount: 500000,
-    },
-    {
-        id: "2",
-        productName: "Antique Watch",
-        status: "Success",
-        date: "10 Dec 2023",
-        amount: 750000,
-    },
-    {
-        id: "3",
-        productName: "Classic Motorcycle",
-        status: "Failed",
-        date: "8 Dec 2023",
-        amount: 25000000,
-    },
-];
+import { Transaction, TransactionStatus } from "@/feature/transaction/type";
+import { useResponsive } from "@/shared/hooks/useResponsive";
 
 export default function Index() {
     const router = useRouter();
+    const { height } = useResponsive();
 
-    const { data: transactions, isLoading: isLoadingAllTransactions } = useAllTransactions();
-
-    const [activeTab, setActiveTab] = useState<TabType>("All");
-    const filteredTransactions =
-        activeTab === "All"
-            ? mockTransactions
-            : mockTransactions.filter(
-                (transaction) =>
-                    transaction.status.toLowerCase() ===
-                    activeTab.toLowerCase(),
-            );
+    const {
+        data: transactions,
+        isLoading: isLoadingAllTransactions,
+        refetch: transactionRefetch,
+        isFetching: isFetchingAllTransactions,
+    } = useAllTransactions();
 
     if (isLoadingAllTransactions || !transactions?.data) return <Loader />;
-    console.log(transactions?.data);
 
     const handleTransactionDetail = (id: string) => {
         router.push(`/transaction/${id}`);
     };
 
     const renderTransactionItem = ({ item }: { item: Transaction }) => {
+        const imageUrl = item.images?.[0]?.url
+            ? buildFullURL(item.images[0].url)
+            : null;
+
         return (
             <TouchableOpacity
                 onPress={() => handleTransactionDetail(item.id)}
@@ -86,13 +46,19 @@ export default function Index() {
                 >
                     {/* Product Image Placeholder */}
                     <Box className={"w-16 h-16 rounded-lg mr-4 overflow-hidden"}>
-                        <Image
-                            source={{
-                                uri: "https://img.freepik.com/premium-vector/boy-illustration-vector_844724-3009.jpg",
-                            }}
-                            className="w-full h-full"
-                            resizeMode="cover"
-                        />
+                        {imageUrl ? (
+                            <Image
+                                source={{ uri: imageUrl }}
+                                className="w-full h-full"
+                                resizeMode="cover"
+                            />
+                        ) : (
+                            <Box
+                                className={"w-16 h-16 rounded-lg mr-4 overflow-hidden justify-center items-center p-1"}
+                            >
+                                <Text className={"text-center"}>No Image</Text>
+                            </Box>
+                        )}
                     </Box>
 
                     {/* Details */}
@@ -103,26 +69,26 @@ export default function Index() {
                         <Text
                             className={cn(
                                 "text-sm",
-                                item.status === "Success" ? "text-green-500" : "text-red-500",
+                                // item.status === "Success" ? "text-green-500" : "text-red-500",
                             )}
                         >
                             <Badge
                                 className="rounded-sm"
                                 size="md"
                                 variant="solid"
-                                action={item.status === "Success" ? "success" : "error"}
+                                action={item.transactionStatus === "DONE" ? "success" : "info"}
                             >
-                                <BadgeText>{item.status}</BadgeText>
+                                <BadgeText>{TransactionStatus.toLabel(item.transactionStatus)}</BadgeText>
                             </Badge>
                         </Text>
                         <Text className="text-gray-500 text-sm">
-                            {item.date}
+                            {formatDateToIndonesian(item.transationDate)}
                         </Text>
                     </Box>
 
                     {/* Amount */}
                     <Text className="text-lg font-bold text-primary-500">
-                        {formatRupiah(item.amount.toString())}
+                        {formatRupiah(item.totalPrice.toString())}
                     </Text>
                 </Card>
             </TouchableOpacity>
@@ -131,54 +97,32 @@ export default function Index() {
 
     // Handle refresh logic
     const onRefresh = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, 2000);
-        });
+        await transactionRefetch();
     };
 
     return (
         <ScreenLayout>
-            {/* Tabs */}
-            <Box className="flex-row mb-4 gap-x-3">
-                {tabs.map((tab) => (
-                    <TouchableOpacity
-                        key={tab}
-                        onPress={() => setActiveTab(tab)}
-                        className={`flex-1 py-2 px-4 rounded-lg ${
-                            activeTab === tab
-                                ? "bg-primary-500"
-                                : "border border-gray-300"
-                        }`}
-                    >
-                        <Text
-                            className={cn(
-                                activeTab === tab
-                                    ? "text-white"
-                                    : "text-gray-600",
-                                "text-center",
-                            )}
-                        >
-                            {tabLabels[tab]}
-                        </Text>
-                    </TouchableOpacity>
-                ))}
-            </Box>
 
             {/* Transactions List */}
             <PullToRefresh onRefresh={onRefresh}>
                 <FlashList
-                    data={filteredTransactions}
+                    data={transactions?.data}
                     renderItem={renderTransactionItem}
                     keyExtractor={(item) => item.id}
                     estimatedItemSize={100}
+                    onRefresh={onRefresh}
+                    refreshing={isFetchingAllTransactions}
                     contentContainerStyle={{ paddingBottom: 16 }}
                     ListEmptyComponent={() => (
-                        <Box className="items-center justify-center mt-10">
-                            <Text className="text-gray-500">
-                                Tidak ada transaksi
-                            </Text>
+                        <Box
+                            style={{
+                                flex: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: height("42%"),
+                            }}
+                        >
+                            <Text style={{ fontSize: 18, color: "gray" }}>Tidak ada Transaksi</Text>
                         </Box>
                     )}
                 />

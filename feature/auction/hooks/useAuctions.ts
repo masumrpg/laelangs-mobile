@@ -1,7 +1,7 @@
 import { useMutation, UseMutationOptions, useQuery, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
 import { auctionService } from "@/service/auctionService";
 import { AxiosError } from "axios";
-import { Auction, UserBidSummary } from "@/feature/auction/type";
+import { Auction, Bid, UserBidSummary } from "@/feature/auction/type";
 import { CommonResponse, PagingResponse } from "@/shared/schema";
 import { BidSchema } from "@/feature/auction/schema";
 
@@ -23,6 +23,7 @@ export const useAuctions = (
         queryFn: async () => {
             return await auctionService.getAll(params);
         },
+        staleTime: 500,
         ...options,
     });
 };
@@ -63,7 +64,7 @@ export const useMyBidAuctions = (
 };
 
 export const useCreateBid = (
-    options?: UseMutationOptions<CommonResponse<any>, AxiosError<CommonResponse<any>>, {
+    options?: UseMutationOptions<CommonResponse<Bid>, AxiosError<CommonResponse<Bid>>, {
         auctionId: string;
         payload: BidSchema
     }>,

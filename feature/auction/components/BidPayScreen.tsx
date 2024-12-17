@@ -31,6 +31,7 @@ interface BidPayScreenProps {
     className?: string;
     handleBid: (data: BidSchema) => void;
     onRefresh?: () => void;
+    isButtonDisabled?: boolean;
 }
 
 
@@ -42,6 +43,7 @@ export default function BidPayScreen(
         className,
         handleBid,
         onRefresh,
+        isButtonDisabled,
     }: BidPayScreenProps) {
     const [availableBid, setAvailableBid] = useState<number>(auction.lastPrice + auction.multiply);
     const [bidData, setBidData] = useState<BidSchema>();
@@ -66,9 +68,7 @@ export default function BidPayScreen(
             setIsNotReadyToBid(false);
         }
     }, [authData?.userId, availableBid, selectedAddress, selectedCourier, userAddress]);
-
-    console.log(bidData);
-
+    
 
     const addBid = () => {
         setAvailableBid((prevState) => prevState + auction.multiply);
@@ -232,7 +232,7 @@ export default function BidPayScreen(
 
 
                     {/* Submit Button */}
-                    <Button onPress={handleSubmit} isDisabled={isNotReadyToBid}>
+                    <Button onPress={handleSubmit} isDisabled={isButtonDisabled || isNotReadyToBid}>
                         <Text className="text-white">Bid Sekarang</Text>
                     </Button>
                 </Card>

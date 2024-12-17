@@ -1,7 +1,5 @@
 // enum
 
-import { string } from "zod";
-
 export enum AuctionStatus {
     ONGOING = "ONGOING",
     ENDED = "ENDED",
@@ -49,6 +47,12 @@ export type UserBidSummary = {
     totalBid: number;
 }
 
+export type Bid = {
+    bid: string;
+    paymentId: string;
+    paymentUrl: string;
+}
+
 // enum function
 
 export namespace AuctionStatus {
@@ -59,7 +63,7 @@ export namespace AuctionStatus {
             case AuctionStatus.ENDED:
                 return "Berakhir";
             default:
-                return "Status Tidak Dikenal"; // Fallback jika status tidak dikenali
+                return "Status Tidak Dikenal";
         }
     }
 }

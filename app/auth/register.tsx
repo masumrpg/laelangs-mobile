@@ -63,7 +63,6 @@ export default function Register() {
                 router.replace("/auth/login");
             }
         } catch (error) {
-            console.log("Register failed. Please try again.", error);
             showToast({
                 type: "error",
                 title: "Error",

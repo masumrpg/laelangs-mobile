@@ -44,6 +44,7 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({
 
     return (
         <ScrollView
+            className={"bg-white"}
             // className="flex-1"
             // contentContainerStyle={{ flexGrow: 1 }}
             onScroll={handleScroll}

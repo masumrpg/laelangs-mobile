@@ -44,8 +44,8 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({
 
     return (
         <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ flexGrow: 1 }}
+            // className="flex-1"
+            // contentContainerStyle={{ flexGrow: 1 }}
             onScroll={handleScroll}
             scrollEventThrottle={16}
             refreshControl={

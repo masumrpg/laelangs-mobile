@@ -13,7 +13,6 @@ import LogoutDialog from "@/feature/profile/components/LogoutDialog";
 import { Divider } from "@/components/ui/divider";
 import AddressForm from "@/feature/profile/components/AddressForm";
 import ProfileForm from "@/feature/profile/components/ProfileForm";
-import { baseURL } from "@/lib/api";
 
 export default function Index() {
     const { showToast } = useToast();
@@ -87,7 +86,7 @@ export default function Index() {
                                 <Text className="text-gray-600 font-bold mb-1">Address</Text>
                                 <Text
                                     className="text-gray-600">
-                                    {userAddresses?.data ? userAddresses?.data[0]?.address : "Belum ada alamat"}
+                                    {userAddresses?.data?.[0]?.address ?? "Belum ada alamat"}
                                 </Text>
                             </Box>
                             <AddressForm buttonText={userAddresses?.data ? "Tambah" : "Lihat"} />
@@ -109,9 +108,9 @@ export default function Index() {
                 </PullToRefresh>
             ) : (
                 // Create User Profile
-                <ScreenLayout className={"mb-10"}>
+                <PullToRefresh onRefresh={onRefresh}>
                     <ProfileForm />
-                </ScreenLayout>
+                </PullToRefresh>
             )}
         </ScreenLayout>
     );

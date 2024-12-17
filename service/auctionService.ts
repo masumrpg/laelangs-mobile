@@ -14,13 +14,12 @@ export const auctionService = {
         category?: string;
         dueDate?: string;
     }) {
-        try {
-            const { data } = await httpClient.get<PagingResponse<Auction[]>>("/auctions", { params });
-            return data;
-        } catch (error) {
-            console.error("Failed to getAll Auction", error);
-            throw new Error("Failed to getAll Auction, please try again");
-        }
+        const { data } = await httpClient.get<PagingResponse<Auction[]>>("/auctions", { params });
+        return data;
+    },
+    async getAllMyAuction() {
+        const { data } = await httpClient.get<PagingResponse<any[]>>("/auctions/bid/me");
+        return data;
     },
     async getOne(id: string) {
         try {
@@ -37,9 +36,7 @@ export const auctionService = {
     },
     async createBid(id: string, payload: BidSchema) {
         try {
-            console.log(id, payload);
             const { data } = await httpClient.post<CommonResponse<any>>(`/auctions/${id}/bid`, payload);
-            console.log(data);
             return data;
         } catch (error) {
             console.error("Failed to create Bid", error);

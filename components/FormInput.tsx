@@ -5,6 +5,8 @@ import { Button, ButtonText } from "@/components/ui/button";
 import { Text } from "react-native";
 import { cn, formatCamelCaseToTitle } from "@/lib/utils";
 import { Box } from "@/components/ui/box";
+import { globalColors } from "@/shared/constant/constants";
+import { Spinner } from "@/components/ui/spinner";
 
 interface FormInputProps<T extends FieldValues> {
     fields: Path<T>[];
@@ -42,7 +44,8 @@ export default function FormInput<T extends FieldValues>(
         titleNameClassName,
         additionalUsernameLabel,
     }: FormInputProps<T>) {
-    const isFormInvalid = !form.formState.isValid || form.formState.isSubmitting;
+    const isFormInvalid = !form.formState.isValid;
+    const isSubmitting = form.formState.isSubmitting;
 
     return (
         <Box className={cn(className)}>
@@ -104,19 +107,23 @@ export default function FormInput<T extends FieldValues>(
             ))}
             {buttonName && onSubmit && (
                 <Button
-                    disabled={isFormInvalid}
+                    disabled={isFormInvalid || isSubmitting}
                     className={cn(
-                        isFormInvalid ? "bg-gray-300 text-gray-500" : "bg-[#ffaa5b] text-white",
+                        isFormInvalid || isSubmitting ? "bg-gray-300 text-gray-500" : "bg-[#ffaa5b] text-white",
                         "mt-3 data-[active=true]:bg-[#e08d40]", buttonClassName,
                     )}
                     onPress={form.handleSubmit(onSubmit)}
                 >
-                    <ButtonText className={cn(
-                        isFormInvalid ? "text-gray-500" : "text-white",
-                        "font-bold text-center text-lg", buttonTextClassName,
-                    )}>
-                        {buttonName}
-                    </ButtonText>
+                    {isSubmitting ? (
+                        <Spinner color={globalColors.secondaryColor} />
+                    ) : (
+                        <ButtonText className={cn(
+                            isFormInvalid ? "text-gray-500" : "text-white",
+                            "font-bold text-center text-lg", buttonTextClassName,
+                        )}>
+                            {buttonName}
+                        </ButtonText>
+                    )}
                 </Button>
             )}
         </Box>

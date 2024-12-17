@@ -15,7 +15,7 @@ import {
     SelectBackdrop,
     SelectContent, SelectDragIndicator, SelectDragIndicatorWrapper,
     SelectInput, SelectItem,
-    SelectPortal,
+    SelectPortal, SelectSectionHeaderText,
     SelectTrigger,
 } from "@/components/ui/select";
 import { ChevronDown } from "lucide-react-native";
@@ -30,6 +30,7 @@ interface BidPayScreenProps {
     userAddresses?: ProfileAddressesResponse[];
     className?: string;
     handleBid: (data: BidSchema) => void;
+    onRefresh?: () => void;
 }
 
 
@@ -40,6 +41,7 @@ export default function BidPayScreen(
         userAddresses,
         className,
         handleBid,
+        onRefresh,
     }: BidPayScreenProps) {
     const [availableBid, setAvailableBid] = useState<number>(auction.lastPrice + auction.multiply);
     const [bidData, setBidData] = useState<BidSchema>();
@@ -55,35 +57,17 @@ export default function BidPayScreen(
 
 
     useEffect(() => {
-        // FIXME ward masih error dan recipetname belum nama asli ynag getme && masih error
         if (selectedAddress !== "" && selectedCourier !== "" && authData?.userId && userAddress) {
             setBidData({
-                userId: authData?.userId,
                 courier: selectedCourier,
                 bidAmount: availableBid,
-                addressRequest: {
-                    address: userAddress.address,
-                    city: userAddress.city,
-                    province: userAddress.province,
-                    subDistrict: userAddress.district,
-                    ward: "I dont Know",
-                    phoneNumber: userAddress.phoneNumber,
-                    postalCode: userAddress.zipCode,
-                    recipientName: "Santo",
-                },
+                addressId: selectedAddress,
             });
             setIsNotReadyToBid(false);
         }
     }, [authData?.userId, availableBid, selectedAddress, selectedCourier, userAddress]);
 
-
-    const onRefresh = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, 2000);
-        });
-    };
+    console.log(bidData);
 
 
     const addBid = () => {
@@ -100,10 +84,14 @@ export default function BidPayScreen(
         }
     };
 
+    const handleRefresh = async () => {
+        if (onRefresh) onRefresh();
+    };
+
 
     return (
-        <PullToRefresh onRefresh={onRefresh}>
-            <ScreenLayout className={className}>
+        <ScreenLayout className={className}>
+            <PullToRefresh onRefresh={handleRefresh}>
                 {/* Product Details */}
                 <Box className="gap-y-2">
                     <Text className="text-2xl text-center font-bold">{auction.product.productName}</Text>
@@ -180,6 +168,9 @@ export default function BidPayScreen(
                                         <SelectDragIndicatorWrapper>
                                             <SelectDragIndicator />
                                         </SelectDragIndicatorWrapper>
+                                        <SelectSectionHeaderText
+                                            className="text-gray-600 font-bold text-center text-xl">Pilih
+                                            Kurir</SelectSectionHeaderText>
                                         {
                                             courierList.map((courier, index) => (
                                                 <SelectItem key={index} label={courier.toUpperCase()} value={courier} />
@@ -216,9 +207,13 @@ export default function BidPayScreen(
                                                     <SelectDragIndicatorWrapper>
                                                         <SelectDragIndicator />
                                                     </SelectDragIndicatorWrapper>
+                                                    <SelectSectionHeaderText
+                                                        className="text-gray-600 font-bold text-center text-xl">Pilih
+                                                        Alamat</SelectSectionHeaderText>
                                                     {
                                                         userAddresses?.map((address) => (
-                                                            <SelectItem key={address.id} label={address.address}
+                                                            <SelectItem key={address.id}
+                                                                        label={`${address.address}, ${address.receiverName}`}
                                                                         value={address.id} />
                                                         ))
                                                     }
@@ -227,7 +222,6 @@ export default function BidPayScreen(
                                         </Select>
                                     </Box>
                                 ) : (
-                                    // FIXME masih error
                                     <Box className="mt-4">
                                         <AddressForm
                                             buttonText={"Tambah Alamat"} />
@@ -250,7 +244,7 @@ export default function BidPayScreen(
                         deskripsi keadaan barang terlebih dahulu.
                     </Text>
                 </Box>
-            </ScreenLayout>
-        </PullToRefresh>
+            </PullToRefresh>
+        </ScreenLayout>
     );
 }

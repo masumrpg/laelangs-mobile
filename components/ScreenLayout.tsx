@@ -10,8 +10,8 @@ interface ScreenLayoutProps {
 export default function ScreenLayout({ children, className }: ScreenLayoutProps) {
     return (
         <Box className={cn(
-            className,
             "flex-1 p-5 pt-32 pb-16 bg-white",
+            className,
         )}>
             {children}
         </Box>

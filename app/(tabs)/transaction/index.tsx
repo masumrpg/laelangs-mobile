@@ -9,6 +9,8 @@ import { useRouter } from "expo-router";
 import PullToRefresh from "@/components/PullToRefresh";
 import { Badge, BadgeText } from "@/components/ui/badge";
 import ScreenLayout from "@/components/ScreenLayout";
+import { useAllTransactions } from "@/feature/transaction/hooks/useTransaction";
+import Loader from "@/components/Loader";
 
 const tabs = ["All", "Success", "Failed"] as const;
 type TabType = typeof tabs[number];
@@ -53,6 +55,9 @@ const mockTransactions: Transaction[] = [
 
 export default function Index() {
     const router = useRouter();
+
+    const { data: transactions, isLoading: isLoadingAllTransactions } = useAllTransactions();
+
     const [activeTab, setActiveTab] = useState<TabType>("All");
     const filteredTransactions =
         activeTab === "All"
@@ -62,6 +67,9 @@ export default function Index() {
                     transaction.status.toLowerCase() ===
                     activeTab.toLowerCase(),
             );
+
+    if (isLoadingAllTransactions || !transactions?.data) return <Loader />;
+    console.log(transactions?.data);
 
     const handleTransactionDetail = (id: string) => {
         router.push(`/transaction/${id}`);
@@ -132,34 +140,34 @@ export default function Index() {
 
     return (
         <ScreenLayout>
-            <PullToRefresh onRefresh={onRefresh}>
-                {/* Tabs */}
-                <Box className="flex-row mb-4 gap-x-3">
-                    {tabs.map((tab) => (
-                        <TouchableOpacity
-                            key={tab}
-                            onPress={() => setActiveTab(tab)}
-                            className={`flex-1 py-2 px-4 rounded-lg ${
+            {/* Tabs */}
+            <Box className="flex-row mb-4 gap-x-3">
+                {tabs.map((tab) => (
+                    <TouchableOpacity
+                        key={tab}
+                        onPress={() => setActiveTab(tab)}
+                        className={`flex-1 py-2 px-4 rounded-lg ${
+                            activeTab === tab
+                                ? "bg-primary-500"
+                                : "border border-gray-300"
+                        }`}
+                    >
+                        <Text
+                            className={cn(
                                 activeTab === tab
-                                    ? "bg-primary-500"
-                                    : "border border-gray-300"
-                            }`}
+                                    ? "text-white"
+                                    : "text-gray-600",
+                                "text-center",
+                            )}
                         >
-                            <Text
-                                className={cn(
-                                    activeTab === tab
-                                        ? "text-white"
-                                        : "text-gray-600",
-                                    "text-center",
-                                )}
-                            >
-                                {tabLabels[tab]}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </Box>
+                            {tabLabels[tab]}
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </Box>
 
-                {/* Transactions List */}
+            {/* Transactions List */}
+            <PullToRefresh onRefresh={onRefresh}>
                 <FlashList
                     data={filteredTransactions}
                     renderItem={renderTransactionItem}

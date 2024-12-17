@@ -51,7 +51,6 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
     const handleClose = () => setShowActionsheet(false);
 
     const onSubmit = (data: AddressSchema) => {
-        console.log(data);
         mutate({
             payload: data,
         }, {

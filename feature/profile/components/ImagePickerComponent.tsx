@@ -30,7 +30,6 @@ const ImagePickerComponent: React.FC<ImagePickerComponentProps> = ({
             quality: 0.5,
         });
 
-        // TODO validasi ukuran gambar
         if (!result.canceled && result.assets?.[0]) {
             const image = result.assets[0];
 

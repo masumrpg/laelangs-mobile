@@ -21,7 +21,7 @@ import { useAddresses, useUserProfile } from "@/feature/profile/hooks/useProfile
 export default function Index() {
     const router = useRouter();
     const { height } = useResponsive();
-    const { data: auctions, isLoading, isFetching } = useAuctions();
+    const { data: auctions, isLoading, isFetching } = useAuctions({ size: 100 });
     const { data: userProfile, isLoading: isUserProfileLoading } = useUserProfile();
     const { data: userAddresses, isLoading: isAddressesLoading } = useAddresses();
 
@@ -160,7 +160,7 @@ export default function Index() {
                     data={auctions?.data}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id}
-                    estimatedItemSize={10}
+                    estimatedItemSize={100}
                     onRefresh={onRefresh}
                     refreshing={isFetching}
                     contentContainerStyle={{

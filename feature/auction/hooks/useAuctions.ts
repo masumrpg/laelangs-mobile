@@ -27,6 +27,7 @@ export const useAuctions = (
     });
 };
 
+
 export const useAuction = (
     id: string,
     options?: UseQueryOptions<CommonResponse<Auction>, AxiosError>,
@@ -49,8 +50,23 @@ export const useBidMe = (
     });
 };
 
+export const useMyBidAuctions = (
+    options?: UseQueryOptions<PagingResponse<any[]>, AxiosError>,
+): UseQueryResult<PagingResponse<any[]>, AxiosError> => {
+    return useQuery<PagingResponse<any[]>, AxiosError>({
+        queryKey: ["auctions", "bid", "list"],
+        queryFn: async () => {
+            return await auctionService.getAllMyAuction();
+        },
+        ...options,
+    });
+};
+
 export const useCreateBid = (
-    options?: UseMutationOptions<CommonResponse<any>, AxiosError, { auctionId: string; payload: BidSchema }>,
+    options?: UseMutationOptions<CommonResponse<any>, AxiosError<CommonResponse<any>>, {
+        auctionId: string;
+        payload: BidSchema
+    }>,
 ) => {
     return useMutation({
             mutationKey: ["auctions", "bid"],

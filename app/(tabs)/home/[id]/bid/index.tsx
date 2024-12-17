@@ -11,28 +11,45 @@ export default function Index() {
     const { id: auctionIdParam } = useLocalSearchParams();
 
     const { data: auction, isLoading } = useAuction(auctionIdParam as string);
-    const { data: bid, isLoading: isBidLoading } = useBidMe(auctionIdParam as string);
-    const { data: addresses, isLoading: isAddressesLoading } = useAddresses();
+    const { data: bid, isLoading: isBidLoading, refetch: myBidRefetch } = useBidMe(auctionIdParam as string);
+    const { data: addresses, isLoading: isAddressesLoading, error } = useAddresses();
     const { data: userProfile, isLoading: isUserProfileLoading } = useUserProfile();
     const { mutate } = useCreateBid();
 
-    console.log(userProfile?.data, "userProfile");
-
     const [isRedirecting, setIsRedirecting] = useState(false);
 
-    useEffect(() => {
-        if (!isUserProfileLoading && !userProfile) {
-            setIsRedirecting(true);
-            router.replace("/profile");
-        }
-    }, [isUserProfileLoading, router, userProfile, userProfile?.data]);
+    // useEffect(() => {
+    // }, [isUserProfileLoading, router, userProfile, userProfile?.data]);
 
     if (isRedirecting || isAddressesLoading || isBidLoading || isLoading) return <Loader />;
     if (!auction?.data) return <Loader />;
 
-    const handleBid = (data: BidSchema) => {
-        mutate({ auctionId: auctionIdParam as string, payload: data });
+    if (!userProfile?.data) {
+        setIsRedirecting(true);
+        router.replace("/profile");
+    }
+
+    console.log(bid);
+    console.log(error);
+
+    const onRefresh = async () => {
+        await myBidRefetch();
+        await onRefresh();
     };
+
+    const handleBid = (data: BidSchema) => {
+        mutate({ auctionId: auctionIdParam as string, payload: data }, {
+            onSuccess: async (data) => {
+                await myBidRefetch();
+                console.log(data);
+                alert("Berhasil melakukan bid");
+            },
+            onError: (error) => {
+                alert("Gagal melakukan bid");
+            },
+        });
+    };
+
 
     return (
         <BidPayScreen
@@ -40,6 +57,7 @@ export default function Index() {
             userBid={bid?.data}
             userAddresses={addresses?.data}
             handleBid={handleBid}
+            onRefresh={onRefresh}
         />
     );
 }

@@ -8,6 +8,14 @@ import { Auction, AuctionStatus, ProductCategory, UserBidSummary } from "@/featu
 import CarouselImage from "@/components/CarouselImage";
 import PullToRefresh from "@/components/PullToRefresh";
 import ScreenLayout from "@/components/ScreenLayout";
+import {
+    Accordion, AccordionContent, AccordionContentText,
+    AccordionHeader, AccordionIcon,
+    AccordionItem,
+    AccordionTitleText,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
+import { MinusIcon, PlusIcon } from "lucide-react-native";
 
 interface BidScreenProps {
     auction: Auction;
@@ -15,6 +23,7 @@ interface BidScreenProps {
     className?: string;
     handleInitialBid?: () => void;
     handleAdditionalBid?: () => void;
+    handleRefresh?: () => void;
 }
 
 export default function BidDetailScreen({
@@ -23,9 +32,9 @@ export default function BidDetailScreen({
                                             className,
                                             handleInitialBid,
                                             handleAdditionalBid,
+                                            handleRefresh,
                                         }: BidScreenProps) {
     const tableAuction = [
-        // ["Kondisi", "Bekas"],
         ["Status", AuctionStatus.toLabel(auction.auctionStatus)],
         ["Bidding Start", formatDateToIndonesian(auction.startDate)],
         ["Bidding End", formatDateToIndonesian(auction.dueDate)],
@@ -36,16 +45,12 @@ export default function BidDetailScreen({
     ];
 
     const onRefresh = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, 2000);
-        });
+        if (handleRefresh) handleRefresh();
     };
 
     return (
         <PullToRefresh onRefresh={onRefresh}>
-            <ScreenLayout className={className}>
+            <ScreenLayout className={cn(className)}>
                 <CarouselImage images={auction.product.images} />
                 <Heading bold size={"xl"}>{auction.product.productName}</Heading>
                 <Box className="flex-row justify-between mb-4">
@@ -59,16 +64,35 @@ export default function BidDetailScreen({
                 </Box>
 
                 {/* Title Section */}
-                <Box className="mb-4">
-                    <Text className="font-bold mb-1">
-                        Bid Barang Kesukaanmu Sekarang!
-                    </Text>
-                    <Text className="text-gray-600 text-sm">
-                        Temukan berbagai barang menarik yang bisa kamu miliki dengan harga terbaik!
-                        Segera ikuti lelang dan bid barang impianmu sebelum orang lain melakukannya.
-                        Jangan lewatkan kesempatan untuk mendapatkan barang berkualitas dengan harga terjangkau.
-                    </Text>
-                </Box>
+                <Accordion variant="unfilled" className="my-3">
+                    <AccordionItem value="item-1">
+                        <AccordionHeader>
+                            <AccordionTrigger>
+                                {({ isExpanded }) => {
+                                    return (
+                                        <>
+                                            <AccordionTitleText>
+                                                Bid Barang Kesukaanmu Sekarang!
+                                            </AccordionTitleText>
+                                            {isExpanded ? (
+                                                <AccordionIcon as={MinusIcon} />
+                                            ) : (
+                                                <AccordionIcon as={PlusIcon} />
+                                            )}
+                                        </>
+                                    );
+                                }}
+                            </AccordionTrigger>
+                        </AccordionHeader>
+                        <AccordionContent>
+                            <AccordionContentText>
+                                Temukan berbagai barang menarik yang bisa kamu miliki dengan harga terbaik!
+                                Segera ikuti lelang dan bid barang impianmu sebelum orang lain melakukannya.
+                                Jangan lewatkan kesempatan untuk mendapatkan barang berkualitas dengan harga terjangkau.
+                            </AccordionContentText>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
 
                 {/* Bidding Status Section */}
                 {
@@ -125,21 +149,21 @@ export default function BidDetailScreen({
                 </Box>
 
                 {/* Pelelang Information Section */}
-                <Box className="border border-gray-300 rounded-md mb-4 p-4">
-                    <Heading size="lg" className="mb-2">Informasi Pelelang</Heading>
-                    <Box className="flex-row justify-between mb-2">
-                        <Text className="text-gray-600">Nama Pelelang</Text>
-                        <Text className="font-medium">Joko</Text>
-                    </Box>
-                    <Box className="flex-row justify-between mb-2">
-                        <Text className="text-gray-600">Kontak</Text>
-                        <Text className="font-medium">Kontak</Text>
-                    </Box>
-                    <Box className="flex-row justify-between">
-                        <Text className="text-gray-600">Alamat</Text>
-                        <Text className="font-medium">Alamat Seler</Text>
-                    </Box>
-                </Box>
+                {/*<Box className="border border-gray-300 rounded-md mb-4 p-4">*/}
+                {/*    <Heading size="lg" className="mb-2">Informasi Pelelang</Heading>*/}
+                {/*    <Box className="flex-row justify-between mb-2">*/}
+                {/*        <Text className="text-gray-600">Nama Pelelang</Text>*/}
+                {/*        <Text className="font-medium">Joko</Text>*/}
+                {/*    </Box>*/}
+                {/*    <Box className="flex-row justify-between mb-2">*/}
+                {/*        <Text className="text-gray-600">Kontak</Text>*/}
+                {/*        <Text className="font-medium">Kontak</Text>*/}
+                {/*    </Box>*/}
+                {/*    <Box className="flex-row justify-between">*/}
+                {/*        <Text className="text-gray-600">Alamat</Text>*/}
+                {/*        <Text className="font-medium">Alamat Seler</Text>*/}
+                {/*    </Box>*/}
+                {/*</Box>*/}
 
                 {/* Note Section */}
                 <Box className="bg-gray-100 p-3 rounded-md">

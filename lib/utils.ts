@@ -43,7 +43,6 @@ export const formatRupiah = (value: string, prefix = "Rp. ") => {
 };
 
 
-// FIXME this file only clear storage
 export const useClearStorage = () => {
     useEffect(() => {
         async function clearStorage() {

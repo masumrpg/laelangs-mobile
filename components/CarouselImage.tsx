@@ -3,7 +3,6 @@ import { Dimensions, Image, Text } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { Box } from "@/components/ui/box";
 import { buildFullURL, cn } from "@/lib/utils";
-import { baseURL } from "@/lib/api";
 
 interface CarouselImageProps {
     images?: {
@@ -23,10 +22,10 @@ export default function CarouselImage({ images, classNames }: CarouselImageProps
         <Box
             className={cn(
                 classNames,
-                "flex-1 mx-5 rounded-lg overflow-hidden bg-gray-200 items-center justify-center",
+                "flex-1 w-full mx-5 h-[200px] rounded-lg overflow-hidden bg-gray-300 items-center justify-center",
             )}
         >
-            <Text className="text-gray-500">No Image Available</Text>
+            <Text className="text-gray-600 text-lg">No Image Available</Text>
         </Box>
     );
 

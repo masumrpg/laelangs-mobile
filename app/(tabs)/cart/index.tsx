@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Pressable, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
@@ -12,6 +12,7 @@ import { Auction } from "@/feature/auction/type";
 import { useRouter } from "expo-router";
 import ScreenLayout from "@/components/ScreenLayout";
 import PullToRefresh from "@/components/PullToRefresh";
+import { auctionService } from "@/service/auctionService";
 
 export default function Index() {
     const router = useRouter();
@@ -30,6 +31,7 @@ export default function Index() {
             return "Kalah";
         }
     });
+
 
     const handleBid = (id: string) => {
         router.push(`/cart/${id}`);
@@ -89,31 +91,31 @@ export default function Index() {
     };
 
     return (
-        <ScreenLayout>
-            <PullToRefresh onRefresh={onRefresh}>
-                {/* Tabs */}
-                <Box className="flex-row mb-4 gap-x-3">
-                    {tabs.map((tab) => (
-                        <Pressable
-                            key={tab}
-                            onPress={() => setActiveTab(tab)}
-                            className={`flex-1 py-2 px-4 rounded-lg ${
-                                activeTab === tab ? "bg-primary-500" : "border border-gray-300"
-                            }`}
+        <ScreenLayout className="">
+            {/* Tabs */}
+            <Box className="flex-row mb-4 gap-x-3">
+                {tabs.map((tab) => (
+                    <Pressable
+                        key={tab}
+                        onPress={() => setActiveTab(tab)}
+                        className={`flex-1 py-2 px-4 rounded-lg ${
+                            activeTab === tab ? "bg-primary-500" : "border border-gray-300"
+                        }`}
+                    >
+                        <Text
+                            className={cn(
+                                activeTab === tab ? "text-white" : "text-gray-600",
+                                "text-center",
+                            )}
                         >
-                            <Text
-                                className={cn(
-                                    activeTab === tab ? "text-white" : "text-gray-600",
-                                    "text-center",
-                                )}
-                            >
-                                {tab}
-                            </Text>
-                        </Pressable>
-                    ))}
-                </Box>
+                            {tab}
+                        </Text>
+                    </Pressable>
+                ))}
+            </Box>
 
-                {/* Auction Items */}
+            {/* Auction Items */}
+            <PullToRefresh onRefresh={onRefresh}>
                 <FlashList
                     data={filteredAuctions}
                     renderItem={renderAuctionItem}

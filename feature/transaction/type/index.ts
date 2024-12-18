@@ -6,6 +6,17 @@ export enum TransactionStatus {
     DONE = "DONE"
 }
 
+export type UserAddress = {
+    id: string;
+    address: string;
+    city: string;
+    district: string;
+    phoneNumber: string;
+    province: string;
+    receiverName: string;
+    zipCode: string;
+}
+
 export type Transaction = {
     id: string;
     merchantId: string;
@@ -19,7 +30,7 @@ export type Transaction = {
         url: string;
     }]
     userId: string;
-    userAddress: string;
+    userAddress: UserAddress;
 }
 
 export namespace TransactionStatus {

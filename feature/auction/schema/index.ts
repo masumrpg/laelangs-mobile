@@ -3,3 +3,8 @@ export interface BidSchema {
     courier: string;
     addressId: string;
 }
+
+export interface BidMeSchema {
+    bidAmount: number;
+    userId: string;
+}

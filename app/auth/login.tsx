@@ -68,9 +68,8 @@ export default function Login() {
             showToast({
                 type: "error",
                 title: "Error",
-                message: "Login Gagal.",
+                message: "Username atau Password salah. Silahkan coba lagi.",
             });
-            console.error("Error from login: ", error);
         }
     };
 
@@ -92,13 +91,15 @@ export default function Login() {
                     {/* Light Effects & Welcome Heading - Conditionally Rendered */}
                     {!isKeyboardVisible && (
                         <>
-                            <Box className="flex-row justify-around w-full absolute">
+                            <Box className={"justify-center items-center pt-20"}>
                                 <Animated.Text
                                     entering={FadeInUp.delay(200).duration(1000).springify()}
                                     exiting={FadeOutUp.delay(10).duration(500).springify()}
                                     className="text-white text-3xl font-bold text-center pt-44 absolute">
                                     Welcome to Laelangs
                                 </Animated.Text>
+                            </Box>
+                            <Box className="flex-row justify-around w-full absolute">
                                 <Animated.Image
                                     entering={FadeInUp.delay(200).duration(1000).springify()}
                                     exiting={FadeOutUp.delay(10).duration(500).springify()}
@@ -116,7 +117,7 @@ export default function Login() {
                     )}
 
                     {/* Content */}
-                    <Box className="h-full w-full px-5 justify-center items-center pt-48 gap-y-32">
+                    <Box className="h-full w-full px-5 justify-center items-center pt-20 gap-y-56">
                         <Box className="flex items-center">
                             <Heading className="text-white text-6xl font-bold text-center">
                                 Login
@@ -136,12 +137,20 @@ export default function Login() {
                                 titleNameClassName="text-[#ffaa5b] text-xl ml-2"
                                 additionalUsernameLabel="Email"
                             />
+
                             <Text className="text-gray-500 text-xl text-center mt-8">
                                 Belum punya akun?{" "}
                                 <Link href="/auth/register">
                                     <Text className="text-[#ffaa5b] font-bold">Register</Text>
                                 </Link>
                             </Text>
+
+                            {/*<Text className="text-gray-500 text-xl text-center mt-8">*/}
+                            {/*    Lupa password?{" "}*/}
+                            {/*    <Link href="/auth/register">*/}
+                            {/*        <Text className="text-[#ffaa5b] font-bold">Reset password</Text>*/}
+                            {/*    </Link>*/}
+                            {/*</Text>*/}
                         </Box>
                     </Box>
                 </Box>

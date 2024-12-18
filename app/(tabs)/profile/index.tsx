@@ -109,7 +109,7 @@ export default function Index() {
             ) : (
                 // Create User Profile
                 <PullToRefresh onRefresh={onRefresh}>
-                    <ProfileForm />
+                    <ProfileForm logoutHandle={logoutHandle} />
                 </PullToRefresh>
             )}
         </ScreenLayout>

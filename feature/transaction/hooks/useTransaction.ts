@@ -15,3 +15,16 @@ export const useAllTransactions = (
         ...options,
     });
 };
+
+export const useAllTransaction = (
+    id: string,
+    options?: UseQueryOptions<PagingResponse<Transaction>, AxiosError>,
+): UseQueryResult<PagingResponse<Transaction>, AxiosError> => {
+    return useQuery<PagingResponse<Transaction>, AxiosError>({
+        queryKey: ["transactions", "details", id],
+        queryFn: async () => {
+            return await transactionService.getOneById(id);
+        },
+        ...options,
+    });
+};

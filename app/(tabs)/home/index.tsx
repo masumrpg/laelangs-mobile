@@ -21,21 +21,13 @@ export default function Index() {
     const router = useRouter();
     const { height } = useResponsive();
 
-    const [page, setPage] = useState(1);
-    const [auctionData, setAuctionData] = useState<Auction[]>([]);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-    const { data: auctions, isLoading, isFetching, refetch: auctionsRefetch } = useAuctions({ page, size: 10 });
+    const { data: auctions, isLoading, isFetching, refetch: auctionsRefetch } = useAuctions({ size: 100 });
     const { data: userProfile, isLoading: isUserProfileLoading } = useUserProfile();
     const { data: userAddresses, isLoading: isAddressesLoading } = useAddresses();
 
-    useEffect(() => {
-        console.log(auctions?.paging);
-        console.log(auctionData.length);
-        if (auctions?.data) {
-            setAuctionData((prevData) => [...prevData, ...auctions.data]);
-        }
-    }, [auctions]);
+    // if (!auctions?.data) return <Loader />;
 
     if (isLoading || isUserProfileLoading || isAddressesLoading) return <Loader />;
 
@@ -84,15 +76,11 @@ export default function Index() {
     };
 
     const handleEndReached = async () => {
+        // @ts-ignore
         if (isFetchingMore || (auctions?.data.length ?? 0) < 10) return;
-        setIsFetchingMore(true);
-        setPage((prevPage) => prevPage + 1);
-        setIsFetchingMore(false);
     };
 
     const onRefresh = async () => {
-        setAuctionData([]); // Reset data saat refresh
-        setPage(1);
         await auctionsRefetch();
     };
 
@@ -154,7 +142,7 @@ export default function Index() {
                 </Heading>
                 <PullToRefresh onRefresh={onRefresh}>
                     <FlashList
-                        data={auctionData}
+                        data={auctions?.data}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.id}
                         estimatedItemSize={100}

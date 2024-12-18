@@ -1,7 +1,7 @@
 import { Auction, Bid, UserBidSummary } from "@/feature/auction/type";
 import httpClient from "@/lib/api";
 import { CommonResponse, PagingResponse } from "@/shared/schema";
-import { BidSchema } from "@/feature/auction/schema";
+import { BidMeSchema, BidSchema } from "@/feature/auction/schema";
 
 export const auctionService = {
     async getAll(params?: {
@@ -31,6 +31,10 @@ export const auctionService = {
     },
     async createBid(id: string, payload: BidSchema) {
         const { data } = await httpClient.post<CommonResponse<Bid>>(`/auctions/${id}/bid`, payload);
+        return data;
+    },
+    async createBidMe(id: string, payload: BidMeSchema) {
+        const { data } = await httpClient.post<CommonResponse<Bid>>(`/auctions/${id}/bid/me`, payload);
         return data;
     },
 };

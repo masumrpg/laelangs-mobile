@@ -1,79 +1,139 @@
 import React from "react";
-import { Image, Text } from "react-native";
+import { Image, Text, View } from "react-native";
 import { Box } from "@/components/ui/box";
-import { formatRupiah } from "@/lib/utils";
+import { buildFullURL, formatRupiah } from "@/lib/utils";
 import PullToRefresh from "@/components/PullToRefresh";
 import ScreenLayout from "@/components/ScreenLayout";
+import { useAllTransaction } from "@/feature/transaction/hooks/useTransaction";
+import { useLocalSearchParams } from "expo-router";
+import Loader from "@/components/Loader";
+import { MaterialIcons } from "@expo/vector-icons";
+import { TransactionStatus } from "@/feature/transaction/type";
+import { Button, ButtonText } from "@/components/ui/button";
+import { useCities, useProvinces } from "@/feature/config/hooks/useConfig";
 
 export default function Index() {
+    const { id: transactionId } = useLocalSearchParams();
+
+    const {
+        data: transactionDetails,
+        isLoading: transactionDetailsLoading,
+        refetch: transactionDetailsRefetch,
+    } = useAllTransaction(transactionId as string);
+
+    const { data: provinces, isLoading: isLoadingProvince } = useProvinces();
+    const { data: cities, isLoading: isLoadingCities } = useCities();
+
+    if (isLoadingCities || isLoadingProvince || !provinces?.data || !cities?.data) {
+        return <Loader />;
+    }
+
+    if (transactionDetailsLoading || !transactionDetails?.data) return <Loader />;
+
+    const province = provinces.data.find(
+        // @ts-ignore
+        (prov) => prov.id === transactionDetails.data.userAddress.province,
+    );
+
+    const city = cities.data.find(
+        // @ts-ignore
+        (city) => city.id === transactionDetails.data.userAddress.city,
+    );
+
     const onRefresh = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, 2000);
-        });
+        await transactionDetailsRefetch();
+    };
+
+    const handleConfirmReceived = () => {
+        console.log("Barang Diterima");
     };
 
     return (
-        <PullToRefresh onRefresh={onRefresh}>
-            <ScreenLayout>
-                {/* Image Placeholder */}
-                <Box className="h-52 bg-gray-200 rounded-lg mb-4 overflow-hidden">
+        <ScreenLayout>
+            <PullToRefresh onRefresh={onRefresh}>
+                {/* Product Image */}
+                <Box className="h-52 bg-gray-200 rounded-lg mb-4 overflow-hidden shadow-md">
                     <Image
-                        source={{ uri: "https://img.freepik.com/premium-vector/boy-illustration-vector_844724-3009.jpg" }}
+                        source={{ uri: buildFullURL(transactionDetails.data.images[0].url) }}
                         className="w-full h-full"
                         resizeMode="cover"
                     />
                 </Box>
 
-                {/* Price */}
-                <Box className="text-2xl font-bold text-primary-500 mb-2">
-                    <Text>
-                        {/*{formatRupiah(3.500.toString())}*/}
-                        3500
+                {/* Product Name */}
+                <Box className="mb-4">
+                    <Text className="text-2xl font-bold text-gray-800">
+                        {transactionDetails.data.productName}
                     </Text>
                 </Box>
 
-                {/* Title */}
-                <Box className="text-xl font-semibold mb-2">
-                    <Text>
-                        Bid Barang Kesukaanmu Sekarang!
+                {/* Total Price */}
+                <Box className="mb-4">
+                    <Text className="text-xl font-semibold text-primary-500">
+                        {formatRupiah(transactionDetails.data.totalPrice.toString())}
                     </Text>
                 </Box>
 
-                {/* Description */}
-                <Box className="text-gray-600 mb-4">
-                    <Text>
-                        Jika Anda ingin menggunakan Dictionary dengan kunci yang unik, Anda bisa
-                        menyimpan ID sebagai kunci utama dan Dictionary properti karyawan
-                        sebagai nilainya: csharp
-                    </Text>
+                {/* Status Pengiriman */}
+                <Box className="mb-6">
+                    <Text className="text-lg font-semibold text-gray-800 mb-2">Status Pengiriman:</Text>
+                    <Box className="flex-row items-center mb-4">
+                        <MaterialIcons
+                            name="local-shipping"
+                            size={24}
+                            color="orange"
+                            style={{ marginRight: 8 }}
+                        />
+                        <Text className="text-gray-700 text-base">
+                            {TransactionStatus.toLabel(transactionDetails.data.transactionStatus)}
+                        </Text>
+                    </Box>
+                    {transactionDetails.data.transactionStatus === TransactionStatus.DONE && (
+                        <Box className="mt-4">
+                            <Button onPress={handleConfirmReceived}>
+                                <ButtonText>Konfirmasi Penerimaan</ButtonText>
+                            </Button>
+                        </Box>
+                    )}
                 </Box>
 
-                {/* Progress Tracker */}
-                <Box className="flex-row items-center mb-6">
-                    <Box className="flex-1 items-center">
-                        <Box className="w-6 h-6 bg-orange-500 rounded-full mb-2" />
-                        <Text className="text-center text-gray-600">Penjual Mengirim Barang</Text>
-                    </Box>
-                    <Box className="flex-1 items-center">
-                        <Box className="w-6 h-6 bg-gray-300 rounded-full mb-2" />
-                        <Text className="text-center text-gray-600">Barang Dalam perjalanan</Text>
-                    </Box>
-                    <Box className="flex-1 items-center">
-                        <Box className="w-6 h-6 bg-gray-300 rounded-full mb-2" />
-                        <Text className="text-center text-gray-600">Barang Telah sampai</Text>
-                    </Box>
+                {/* Address Section */}
+                <Box className="mb-6">
+                    <Text className="text-xl font-semibold text-gray-800 mb-2">
+                        Alamat Pengiriman:
+                    </Text>
+                    <View className="bg-gray-100 rounded-lg p-4 border border-gray-300 shadow-sm">
+                        {[
+                            ["Alamat", transactionDetails.data.userAddress.address],
+                            ["Provinsi", province ? province.provinceName : "Provinsi tidak diketahui"],
+                            ["Kota", city ? city.cityName : "Kota tidak diketahui"],
+                            ["Kecamatan", transactionDetails.data.userAddress.district],
+                            ["Kode Pos", transactionDetails.data.userAddress.zipCode],
+                            ["Nomor HP", transactionDetails.data.userAddress.phoneNumber],
+                        ].map(([label, value], index) => (
+                            <View
+                                key={index}
+                                className="flex-row justify-between mb-2"
+                                style={{
+                                    borderBottomWidth: index !== 5 ? 1 : 0,
+                                    borderBottomColor: "#E5E7EB",
+                                }}
+                            >
+                                <Text className="text-gray-600 font-medium">{label}</Text>
+                                <Text className="text-gray-800 font-semibold">{value}</Text>
+                            </View>
+                        ))}
+                    </View>
                 </Box>
 
                 {/* Note Section */}
-                <Box className="p-4 bg-gray-100 rounded-lg border border-gray-300">
+                <Box className="p-4 bg-gray-100 rounded-lg border border-gray-300 shadow-sm">
                     <Text className="font-bold text-gray-600 mb-2">Note</Text>
                     <Text className="text-gray-600">
-                        Customer wajib membaca deskripsi keadaan barang terlebih dahulu
+                        Customer wajib membaca deskripsi keadaan barang terlebih dahulu.
                     </Text>
                 </Box>
-            </ScreenLayout>
-        </PullToRefresh>
+            </PullToRefresh>
+        </ScreenLayout>
     );
 }

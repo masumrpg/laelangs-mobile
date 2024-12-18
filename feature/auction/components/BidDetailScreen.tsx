@@ -48,6 +48,7 @@ export default function BidDetailScreen({
         if (handleRefresh) handleRefresh();
     };
 
+
     return (
         <PullToRefresh onRefresh={onRefresh}>
             <ScreenLayout className={cn(className)}>
@@ -56,7 +57,7 @@ export default function BidDetailScreen({
                 <Box className="flex-row justify-between mb-4">
                     <Text
                         className="text-primary-500 text-2xl font-bold mt-2">{formatRupiah(auction.lastPrice.toString())}</Text>
-                    {handleInitialBid && (
+                    {handleInitialBid && (userBid === null || undefined) && (
                         <Button onPress={handleInitialBid}>
                             <Text className={"text-white"}>Bid Sekarang</Text>
                         </Button>

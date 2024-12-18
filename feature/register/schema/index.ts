@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 export const registerSchema = z.object({
-    username: z.string().min(1, "Username is required"),
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z.string().min(8, "Confirm password must be at least 8 characters"),
+    username: z.string().min(1, "Username dibutuhkan").max(50, "Username terlalu panjang"),
+    email: z.string().email("Email tidak valid"),
+    password: z.string().min(8, "Password minimal 8 karakter"),
+    confirmPassword: z.string().min(8, "Konfirmasi password minimal 8 karakter"),
 }).refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords must match",
+    message: "Password harus sama dengan konfirmasi password.",
     path: ["confirmPassword"],
 });
 

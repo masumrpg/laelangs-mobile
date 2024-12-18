@@ -3,7 +3,7 @@ import { auctionService } from "@/service/auctionService";
 import { AxiosError } from "axios";
 import { Auction, Bid, UserBidSummary } from "@/feature/auction/type";
 import { CommonResponse, PagingResponse } from "@/shared/schema";
-import { BidSchema } from "@/feature/auction/schema";
+import { BidMeSchema, BidSchema } from "@/feature/auction/schema";
 
 export const useAuctions = (
     params?: {
@@ -72,6 +72,20 @@ export const useCreateBid = (
     return useMutation({
             mutationKey: ["auctions", "bid"],
             mutationFn: async ({ auctionId, payload }) => await auctionService.createBid(auctionId, payload),
+            ...options,
+        },
+    );
+};
+
+export const useCreateBidMe = (
+    options?: UseMutationOptions<CommonResponse<Bid>, AxiosError<CommonResponse<Bid>>, {
+        auctionId: string;
+        payload: BidMeSchema
+    }>,
+) => {
+    return useMutation({
+            mutationKey: ["auctions", "bid"],
+            mutationFn: async ({ auctionId, payload }) => await auctionService.createBidMe(auctionId, payload),
             ...options,
         },
     );

@@ -30,6 +30,7 @@ export const useCities = (
     return useQuery<PagingResponse<City[]>, AxiosError>({
         queryKey: ["config", "cities"],
         queryFn: async () => await configService.getAllCity(),
+        staleTime: Infinity,
         ...options,
     });
 };
@@ -40,6 +41,7 @@ export const useProvinces = (
     return useQuery<PagingResponse<Province[]>, AxiosError>({
         queryKey: ["config", "provinces"],
         queryFn: async () => await configService.getAllProvince(),
+        staleTime: Infinity,
         ...options,
     });
 };

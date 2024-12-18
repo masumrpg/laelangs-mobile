@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, ButtonText } from "@/components/ui/button";
@@ -32,6 +32,7 @@ import { useCities, useProvinces } from "@/feature/config/hooks/useConfig";
 import { AddressSchema, addressSchema } from "@/feature/profile/schema";
 import { useCreateAddress } from "@/feature/profile/hooks/useProfiles";
 import { useToast } from "@/shared/hooks/useToast";
+import DropDownPicker from "react-native-dropdown-picker";
 
 interface AddressFormProps {
     buttonText: string;
@@ -47,6 +48,41 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
         mode: "onChange",
     });
     const { showToast } = useToast();
+
+    const [provinceOpen, setProvinceOpen] = useState(false);
+    const [provinceValue, setProvinceValue] = useState(null);
+    const [provinceItems, setProvinceItems] = useState(
+        provinces?.data?.map((province) => ({ label: province.provinceName, value: province.id })) || [],
+    );
+
+
+    const [cityOpen, setCityOpen] = useState(false);
+    const [cityValue, setCityValue] = useState(null);
+    const [cityItems, setCityItems] = useState(
+        cities?.data?.map((city) => ({ label: city.cityName, value: city.id })) || [],
+    );
+
+    // Handle provinces
+    useEffect(() => {
+        if (provinces?.data) {
+            const mappedProvinces = provinces.data.map((province) => ({
+                label: province.provinceName,
+                value: province.id,
+            }));
+            setProvinceItems(mappedProvinces);
+        }
+    }, [provinces]);
+
+    // Handle cities
+    useEffect(() => {
+        if (cities?.data) {
+            const mappedCities = cities.data.map((city) => ({
+                label: city.cityName,
+                value: city.id,
+            }));
+            setCityItems(mappedCities);
+        }
+    }, [cities]);
 
     const handleClose = () => setShowActionsheet(false);
 
@@ -74,8 +110,6 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
         reset();
     };
 
-    // if (isProvinceLoading || isCitiesLoading) return <Loader />;
-
     return (
         <>
             <Button variant={"outline"} size={"xs"} className={"rounded-full"} onPress={() => setShowActionsheet(true)}>
@@ -90,7 +124,7 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                         <ActionsheetDragIndicatorWrapper>
                             <ActionsheetDragIndicator />
                         </ActionsheetDragIndicatorWrapper>
-                        <ActionsheetScrollView className="w-full pt-5 px-5">
+                        <ActionsheetScrollView className="w-full pt-5 px-5" nestedScrollEnabled={true}>
                             <ActionsheetSectionHeaderText
                                 className="text-gray-600 font-bold text-center text-xl"
                             >Tambah Alamat</ActionsheetSectionHeaderText>
@@ -102,7 +136,7 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                                 control={control}
                                 render={({ field: { onChange, value } }) => (
                                     <TextInput
-                                        className="border border-gray-300 rounded-md p-3"
+                                        className="border border-gray-500 rounded-md p-3"
                                         placeholder="Masukkan Alamat"
                                         value={value}
                                         onChangeText={onChange}
@@ -118,34 +152,28 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                             <Controller
                                 name="province"
                                 control={control}
-                                render={({ field: { onChange, value } }) => (
-                                    <Select onValueChange={(value) => onChange(value)}>
-                                        <SelectTrigger variant="outline" size="md" className="h-14">
-                                            <SelectInput placeholder="Pilih Provinsi"
-                                                         value={provinces?.data?.find(province => province.id === value)?.provinceName || ""} />
-                                            <SelectIcon className="mr-3" as={ChevronDownIcon} />
-                                        </SelectTrigger>
-                                        <SelectPortal>
-                                            <SelectBackdrop />
-                                            <SelectContent>
-                                                <SelectDragIndicatorWrapper>
-                                                    <SelectDragIndicator />
-                                                </SelectDragIndicatorWrapper>
-                                                <SelectScrollView className={"h-96 my-5"}>
-                                                    <SelectSectionHeaderText
-                                                        className="text-gray-600 font-bold text-center text-xl">Pilih
-                                                        Provinsi</SelectSectionHeaderText>
-                                                    {provinces?.data?.map((province) => (
-                                                        <SelectItem
-                                                            key={province.id}
-                                                            label={province.provinceName}
-                                                            value={province.id}
-                                                        />
-                                                    ))}
-                                                </SelectScrollView>
-                                            </SelectContent>
-                                        </SelectPortal>
-                                    </Select>
+                                render={({ field: { onChange } }) => (
+                                    <DropDownPicker
+                                        searchable={true}
+                                        open={provinceOpen}
+                                        value={provinceValue}
+                                        items={provinceItems}
+                                        setOpen={setProvinceOpen}
+                                        setValue={(value) => {
+                                            setProvinceValue(value);
+                                        }}
+                                        onChangeValue={(value) => onChange(value)}
+                                        setItems={setProvinceItems}
+                                        placeholder="Pilih Provinsi"
+                                        listMode="SCROLLVIEW"
+                                        scrollViewProps={{
+                                            nestedScrollEnabled: true,
+                                        }}
+                                        style={{ zIndex: 2000, borderColor: "gray" }}
+                                        dropDownContainerStyle={{ zIndex: 3000, borderColor: "gray" }}
+                                        listItemContainerStyle={{ borderColor: "gray" }}
+                                        searchContainerStyle={{ borderColor: "gray" }}
+                                    />
                                 )}
                             />
                             {errors.province && (
@@ -157,39 +185,29 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                             <Controller
                                 name="city"
                                 control={control}
-                                render={({ field: { onChange, value } }) => (
-                                    <Select
-                                        onValueChange={(value) => onChange(value)}
-                                        selectedValue={value}
-                                    >
-                                        <SelectTrigger variant="outline" size="md" className="h-14">
-                                            <SelectInput
-                                                placeholder="Pilih Kota"
-                                                value={cities?.data?.find(city => city.id === value)?.cityName || ""}
-                                            />
-                                            <SelectIcon className="mr-3" as={ChevronDownIcon} />
-                                        </SelectTrigger>
-                                        <SelectPortal>
-                                            <SelectBackdrop />
-                                            <SelectContent>
-                                                <SelectDragIndicatorWrapper>
-                                                    <SelectDragIndicator />
-                                                </SelectDragIndicatorWrapper>
-                                                <SelectScrollView className={"h-96 my-5"}>
-                                                    <SelectSectionHeaderText
-                                                        className="text-gray-600 font-bold text-center text-xl">Pilih
-                                                        Kota</SelectSectionHeaderText>
-                                                    {cities?.data?.map((city) => (
-                                                        <SelectItem
-                                                            key={city.id}
-                                                            label={city.cityName}
-                                                            value={city.id}
-                                                        />
-                                                    ))}
-                                                </SelectScrollView>
-                                            </SelectContent>
-                                        </SelectPortal>
-                                    </Select>
+                                render={({ field: { onChange } }) => (
+                                    <DropDownPicker
+                                        searchable={true}
+                                        open={cityOpen}
+                                        value={cityValue}
+                                        items={cityItems}
+                                        setOpen={setCityOpen}
+                                        setValue={(value) => {
+                                            setCityValue(value);
+                                            onChange(value);
+                                        }}
+                                        onChangeValue={(value) => onChange(value)}
+                                        setItems={setCityItems}
+                                        placeholder="Pilih Kota"
+                                        listMode="SCROLLVIEW"
+                                        scrollViewProps={{
+                                            nestedScrollEnabled: true,
+                                        }}
+                                        style={{ zIndex: 1000, borderColor: "gray" }}
+                                        dropDownContainerStyle={{ zIndex: 1500, borderColor: "gray" }}
+                                        listItemContainerStyle={{ borderColor: "gray" }}
+                                        searchContainerStyle={{ borderColor: "gray" }}
+                                    />
                                 )}
                             />
                             {errors.city && (
@@ -203,7 +221,7 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                                 control={control}
                                 render={({ field: { onChange, value } }) => (
                                     <TextInput
-                                        className="border border-gray-300 rounded-md p-3"
+                                        className="border border-gray-500 rounded-md p-3"
                                         placeholder="Masukkan Kecamatan"
                                         value={value}
                                         onChangeText={onChange}
@@ -221,7 +239,7 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                                 control={control}
                                 render={({ field: { onChange, value } }) => (
                                     <TextInput
-                                        className="border border-gray-300 rounded-md p-3"
+                                        className="border border-gray-500 rounded-md p-3"
                                         placeholder="Masukkan Kode Pos"
                                         value={value}
                                         onChangeText={onChange}
@@ -240,7 +258,7 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                                 control={control}
                                 render={({ field: { onChange, value } }) => (
                                     <TextInput
-                                        className="border border-gray-300 rounded-md p-3"
+                                        className="border border-gray-500 rounded-md p-3"
                                         placeholder="Masukkan Nama penerima"
                                         value={value}
                                         onChangeText={onChange}
@@ -258,7 +276,7 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                                 control={control}
                                 render={({ field: { onChange, value } }) => (
                                     <TextInput
-                                        className="border border-gray-300 rounded-md p-3"
+                                        className="border border-gray-500 rounded-md p-3"
                                         placeholder="Masukkan Nomor Ponsel"
                                         value={value}
                                         onChangeText={onChange}
@@ -271,8 +289,8 @@ export default function AddressForm({ buttonText }: AddressFormProps) {
                             )}
 
                             {/* Action Button */}
-                            <Button onPress={handleSubmit(onSubmit)} className="mt-5">
-                                <ButtonText className="flex-1 text-center">Tambah Alamat</ButtonText>
+                            <Button onPress={handleSubmit(onSubmit)} className="my-5 h-14 rounded-full">
+                                <ButtonText className="flex-1 text-center text-lg">Tambah Alamat</ButtonText>
                             </Button>
                         </ActionsheetScrollView>
                     </ActionsheetContent>

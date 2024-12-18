@@ -37,7 +37,15 @@ export default function RootLayout() {
         ...FontAwesome.font,
     });
 
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                refetchOnWindowFocus: true,
+                refetchOnMount: true,
+                refetchOnReconnect: true,
+            },
+        },
+    });
 
 
     addAuthInterceptor(router);

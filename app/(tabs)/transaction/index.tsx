@@ -25,7 +25,7 @@ export default function Index() {
         isFetching: isFetchingAllTransactions,
     } = useAllTransactions();
 
-    if (isLoadingAllTransactions || !transactions?.data) return <Loader />;
+    if (isLoadingAllTransactions) return <Loader />;
 
     const handleTransactionDetail = (id: string) => {
         router.push(`/transaction/${id}`);
@@ -69,7 +69,6 @@ export default function Index() {
                         <Text
                             className={cn(
                                 "text-sm",
-                                // item.status === "Success" ? "text-green-500" : "text-red-500",
                             )}
                         >
                             <Badge

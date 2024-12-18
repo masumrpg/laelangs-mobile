@@ -26,8 +26,9 @@ import { useCreateUserProfile } from "@/feature/profile/hooks/useProfiles";
 import { ImagePickerAsset } from "expo-image-picker";
 import { useToast } from "@/shared/hooks/useToast";
 import { useRouter } from "expo-router";
+import LogoutDialog from "@/feature/profile/components/LogoutDialog";
 
-export default function ProfileForm() {
+export default function ProfileForm({ logoutHandle }: { logoutHandle: () => void }) {
     const router = useRouter();
     const { showToast } = useToast();
     const form = useZodForm<UserProfileSchema>({
@@ -255,6 +256,9 @@ export default function ProfileForm() {
                 >
                     <Text className="text-white">Simpan</Text>
                 </Button>
+            </Box>
+            <Box>
+                <LogoutDialog logoutHandle={logoutHandle} />
             </Box>
         </Box>
     );

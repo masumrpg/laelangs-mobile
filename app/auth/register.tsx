@@ -60,7 +60,8 @@ export default function Register() {
                     title: "Success",
                     message: res.message,
                 });
-                router.replace("/auth/login");
+                // FIXME bug setelah ke replace fkicjering
+                // router.replace("/auth/login");
             }
         } catch (error) {
             showToast({

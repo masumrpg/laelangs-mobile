@@ -1,16 +1,19 @@
 import React, { useRef, useState } from "react";
 import { Animated, NativeScrollEvent, NativeSyntheticEvent, RefreshControl, ScrollView, Text } from "react-native";
+import { cn } from "@/lib/utils";
 
 type PullToRefreshProps = {
     children: React.ReactNode;
     onRefresh: () => Promise<unknown>;
     spinnerText?: string;
+    className?: string;
 };
 
 const PullToRefresh: React.FC<PullToRefreshProps> = ({
                                                          children,
                                                          onRefresh,
                                                          spinnerText,
+                                                         className,
                                                      }) => {
     const [refreshing, setRefreshing] = useState(false);
     const translateY = useRef(new Animated.Value(0)).current;
@@ -44,7 +47,10 @@ const PullToRefresh: React.FC<PullToRefreshProps> = ({
 
     return (
         <ScrollView
-            className={"bg-white"}
+            className={cn(
+                className,
+                "bg-white",
+            )}
             // className="flex-1"
             // contentContainerStyle={{ flexGrow: 1 }}
             onScroll={handleScroll}

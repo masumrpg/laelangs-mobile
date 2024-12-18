@@ -8,7 +8,7 @@ export const auctionService = {
         page?: number;
         size?: number;
         sortBy?: string;
-        query?: string;
+        q?: string;
         minPrice?: number;
         maxPrice?: number;
         category?: string;

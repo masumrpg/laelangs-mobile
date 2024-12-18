@@ -111,14 +111,18 @@ export default function BidPayScreen(
                     </Heading>
 
                     <Box className="flex flex-row justify-center items-center gap-x-20">
-                        <Button onPress={decreaseBid}
-                                isDisabled={availableBid === auction.lastPrice + auction.multiply}>
+                        <Button
+                            className={"rounded-full"}
+                            onPress={decreaseBid}
+                            isDisabled={availableBid === auction.lastPrice + auction.multiply}>
                             <Text className="text-white ">
                                 Kurangi
                             </Text>
                         </Button>
-                        <Button>
-                            <Text onPress={addBid} className="text-white ">
+                        <Button
+                            className={"rounded-full"}
+                            onPress={addBid}>
+                            <Text className="text-white ">
                                 Tambah
                             </Text>
                         </Button>
@@ -232,8 +236,9 @@ export default function BidPayScreen(
 
 
                     {/* Submit Button */}
-                    <Button onPress={handleSubmit} isDisabled={isButtonDisabled || isNotReadyToBid}>
-                        <Text className="text-white">Bid Sekarang</Text>
+                    <Button className={"rounded-full h-14"} onPress={handleSubmit}
+                            isDisabled={isButtonDisabled || isNotReadyToBid}>
+                        <Text className="text-white text-xl">Bid Sekarang</Text>
                     </Button>
                 </Card>
 

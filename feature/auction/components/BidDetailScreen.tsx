@@ -52,15 +52,15 @@ export default function BidDetailScreen({
 
 
     return (
-        <PullToRefresh onRefresh={onRefresh}>
-            <ScreenLayout className={cn(className)}>
+        <ScreenLayout className={cn("pt-24 pb-0", className)}>
+            <PullToRefresh className={"pt-10"} onRefresh={onRefresh}>
                 <CarouselImage images={auction.product.images} />
                 <Heading bold size={"xl"}>{auction.product.productName}</Heading>
                 <Box className="flex-row justify-between mb-4">
                     <Text
                         className="text-primary-500 text-2xl font-bold mt-2">{formatRupiah(auction.lastPrice.toString())}</Text>
                     {handleInitialBid && (userBid?.totalBid === null || undefined) && (
-                        <Button onPress={handleInitialBid}>
+                        <Button className={"rounded-full"} onPress={handleInitialBid}>
                             <Text className={"text-white"}>Bid Sekarang</Text>
                         </Button>
                     )}
@@ -151,7 +151,7 @@ export default function BidDetailScreen({
                             {
                                 userBid.totalBid < auction.lastPrice && (
                                     <Box className="flex-row justify-around mt-2">
-                                        <Button onPress={handleAdditionalBid}>
+                                        <Button className={"rounded-full"} onPress={handleAdditionalBid}>
                                             <Text className="text-white font-bold">Tambah</Text>
                                         </Button>
                                     </Box>
@@ -194,13 +194,13 @@ export default function BidDetailScreen({
                 {/*</Box>*/}
 
                 {/* Note Section */}
-                <Box className="bg-gray-100 p-3 rounded-md">
+                <Box className="bg-gray-100 p-3 rounded-md mb-20">
                     <Text className="text-gray-600 text-sm">
                         <Text className="font-bold">Note:</Text> Customer wajib membaca
                         deskripsi keadaan barang terlebih dahulu.
                     </Text>
                 </Box>
-            </ScreenLayout>
-        </PullToRefresh>
+            </PullToRefresh>
+        </ScreenLayout>
     );
 }

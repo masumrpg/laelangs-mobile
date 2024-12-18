@@ -59,7 +59,6 @@ export default function Index() {
                     alert("Berhasil melakukan bid");
                 },
                 onError: (error) => {
-                    console.log(error);
                     alert("Gagal melakukan bid");
                 },
             });
@@ -68,9 +67,6 @@ export default function Index() {
             const scondBidData = {
                 bidAmount: bidAmount - myBid?.data?.totalBid,
             };
-
-            console.log("bid amout", bidAmount);
-            console.log("total bid", myBid?.data?.totalBid);
 
             mutateSecondBid({ auctionId: auctionIdParam as string, payload: scondBidData }, {
                 onSuccess: async (result) => {

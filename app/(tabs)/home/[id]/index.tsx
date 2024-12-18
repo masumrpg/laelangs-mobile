@@ -7,14 +7,15 @@ import { useAuction, useBidMe } from "@/feature/auction/hooks/useAuctions";
 export default function Index() {
     const { id: auctionIdParam } = useLocalSearchParams();
     const router = useRouter();
-    const { data: auction, isLoading: isAuctionLoading, refetch } = useAuction(auctionIdParam as string);
-    const { data: bid, isLoading: isBidLoading } = useBidMe(auctionIdParam as string);
+    const {
+        data: auction,
+        isLoading: isAuctionLoading,
+        refetch: auctionRefetch,
+    } = useAuction(auctionIdParam as string);
+    const { data: bid, isLoading: isBidLoading, refetch: bidRefetch } = useBidMe(auctionIdParam as string);
 
     if (isBidLoading) return <Loader />;
-
-
     if (isAuctionLoading || !auction?.data) return <Loader />;
-
 
     const handleBid = () => {
         router.push(`/home/${auctionIdParam}/bid`);
@@ -25,7 +26,8 @@ export default function Index() {
     };
 
     const handleRefresh = async () => {
-        await refetch();
+        await auctionRefetch();
+        await bidRefetch();
     };
 
     return <BidDetailScreen

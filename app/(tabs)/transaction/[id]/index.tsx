@@ -124,8 +124,8 @@ export default function Index() {
                     </Box>
                     {transactionDetails.data.transactionStatus === TransactionStatus.ARRIVED && (
                         <Box className="mt-4">
-                            <Button onPress={() => setShowAlertDialog(true)}>
-                                <ButtonText>Konfirmasi</ButtonText>
+                            <Button className={"rounded-full h-12"} onPress={() => setShowAlertDialog(true)}>
+                                <ButtonText className={"text-2xl"}>Konfirmasi</ButtonText>
                             </Button>
                             <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
                                 <AlertDialogBackdrop />

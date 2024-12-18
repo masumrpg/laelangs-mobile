@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { TextInput, Pressable, Text, Image } from "react-native";
 import { Box } from "@/components/ui/box";
 import ScreenLayout from "@/components/ScreenLayout";
@@ -12,14 +12,27 @@ import { buildFullURL, formatDateToIndonesian, formatRupiah } from "@/lib/utils"
 import { Card } from "@/components/ui/card";
 import { useRouter } from "expo-router";
 import { useResponsive } from "@/shared/hooks/useResponsive";
-import FilterModal from "@/feature/search/components/FilterModal";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+    Actionsheet,
+    ActionsheetBackdrop,
+    ActionsheetContent,
+    ActionsheetDragIndicatorWrapper,
+    ActionsheetDragIndicator,
+    ActionsheetItem,
+    ActionsheetItemText,
+} from "@/components/ui/select/select-actionsheet";
+import {
+    Button,
+    ButtonText,
+} from "@/components/ui/button";
+
 
 export default function Index() {
     const queryClient = useQueryClient();
     const { height } = useResponsive();
     const router = useRouter();
-    const [filterVisible, setFilterVisible] = useState(false);
+    const [actionsheetVisible, setActionsheetVisible] = useState(false);
     const [filters, setFilters] = useState({
         q: "",
         minPrice: "",
@@ -27,19 +40,16 @@ export default function Index() {
         category: "",
     });
 
-    const { data: auctions, isLoading: isAuctionLoading } = useAuctions({
+    const { data: auctions, isLoading: isAuctionLoading, refetch: auctionsRefetch } = useAuctions({
         q: filters.q,
         minPrice: filters.minPrice ? parseInt(filters.minPrice, 10) : undefined,
         maxPrice: filters.maxPrice ? parseInt(filters.maxPrice, 10) : undefined,
         category: filters.category,
+        size: 100,
     });
 
     const onRefresh = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, 2000);
-        });
+        await auctionsRefetch();
     };
 
     const handleItem = (id: string) => {
@@ -75,10 +85,6 @@ export default function Index() {
         );
     };
 
-    const applyFilters = () => {
-        setFilterVisible(false);
-    };
-
     const clearFilter = (key: string) => {
         setFilters((prev) => ({ ...prev, [key]: "" }));
     };
@@ -92,15 +98,13 @@ export default function Index() {
                     value={filters.q}
                     onChangeText={(text) => setFilters((prev) => ({ ...prev, q: text }))}
                 />
-                <Pressable onPress={async () => {
-                    setFilterVisible(true);
-                    await queryClient.invalidateQueries({ queryKey: ["auctions", filters.q] });
-                }} className="p-3 rounded-lg border border-gray-300">
+                <Pressable onPress={() => setActionsheetVisible(true)}
+                           className="p-3 rounded-lg border border-gray-300">
                     <Filter size={18} color="black" />
                 </Pressable>
             </Box>
 
-            {/* Display active filters */}
+            {/* Menampilkan filter yang aktif */}
             <Box className="flex-row flex-wrap mb-4 gap-2">
                 {Object.entries(filters)
                     .filter(([key, value]) => value)
@@ -132,13 +136,31 @@ export default function Index() {
                     />
                 </PullToRefresh>
             )}
-            <FilterModal
-                visible={filterVisible}
-                filters={filters}
-                setFilters={setFilters}
-                onApply={applyFilters}
-                onClose={() => setFilterVisible(false)}
-            />
+
+            {/* Actionsheet untuk Filter */}
+            <Actionsheet isOpen={actionsheetVisible} onClose={() => setActionsheetVisible(false)}>
+                <ActionsheetBackdrop />
+                <ActionsheetContent>
+                    <ActionsheetDragIndicatorWrapper>
+                        <ActionsheetDragIndicator />
+                    </ActionsheetDragIndicatorWrapper>
+
+                    <Box className="items-center">
+                        <ActionsheetItem onPress={() => setFilters((prev) => ({ ...prev, q: "Contoh Filter 1" }))}>
+                            <ActionsheetItemText className="text-center">Contoh Filter 1</ActionsheetItemText>
+                        </ActionsheetItem>
+                        <ActionsheetItem onPress={() => setFilters((prev) => ({ ...prev, q: "Contoh Filter 2" }))}>
+                            <ActionsheetItemText className="text-center">Contoh Filter 2</ActionsheetItemText>
+                        </ActionsheetItem>
+                        <ActionsheetItem onPress={() => setFilters((prev) => ({ ...prev, q: "Contoh Filter 3" }))}>
+                            <ActionsheetItemText className="text-center">Contoh Filter 3</ActionsheetItemText>
+                        </ActionsheetItem>
+                        <ActionsheetItem onPress={() => setActionsheetVisible(false)}>
+                            <ActionsheetItemText className="text-center text-red-500">Tutup</ActionsheetItemText>
+                        </ActionsheetItem>
+                    </Box>
+                </ActionsheetContent>
+            </Actionsheet>
         </ScreenLayout>
     );
 }

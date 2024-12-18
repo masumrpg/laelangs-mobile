@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Image, Pressable, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
+import { Image, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
 import { Card } from "@/components/ui/card";
@@ -14,22 +14,37 @@ import PullToRefresh from "@/components/PullToRefresh";
 
 export default function Index() {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState("Menang");
-    const tabs = ["Menang", "Kalah"];
 
-    const { data: myBidAuctions, isLoading: isMyBidAuctions, refetch: myBidRefetch } = useGetAllMyBidAuctions();
+    const {
+        data: myBidAuctions,
+        isLoading: isMyBidAuctions,
+        refetch: myBidRefetch,
+        isError: isAuctionError,
+    } = useGetAllMyBidAuctions();
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            myBidRefetch();
+        }, 15000); // 15 detik
+
+        return () => clearInterval(interval); // Bersihkan interval saat komponen unmount
+    }, [myBidRefetch]);
 
     if (isMyBidAuctions) return <Loader />;
 
-    const filteredAuctions = myBidAuctions?.data?.filter(myBidAuction => {
-        if (activeTab === "Menang") {
-            // return auction.auctionStatus === "Menang";
-            return "Menang";
-        } else {
-            // return auction.auctionStatus === "Kalah";
-            return "Kalah";
-        }
-    });
+    if (isAuctionError) {
+        return (
+            <ScreenLayout>
+                <Text className="text-center text-red-500 mt-4">
+                    Terjadi kesalahan saat memuat data. Silakan coba lagi.
+                </Text>
+            </ScreenLayout>
+        );
+    }
+
+    const onGoingBid = myBidAuctions?.data?.filter(
+        (bid) => bid.auction.auctionStatus === AuctionStatus.ONGOING,
+    );
 
     const handleBid = (id: string) => {
         router.push(`/cart/${id}`);
@@ -48,10 +63,12 @@ export default function Index() {
             <TouchableOpacity onPress={() => handleBid(item.auction.id)}>
                 <Card
                     key={item.auction.id}
-                    className="flex-row items-center mb-4 p-4 border border-gray-300 rounded-lg"
+                    className={cn(
+                        item.totalBid >= item.auction.lastPrice ? "border-primary-500" : "border-red-500",
+                        "flex-row items-center mb-4 p-4 border rounded-lg")}
                 >
-                    {/* Image */}
-                    <Box className={"w-16 h-16 rounded-lg mr-4 overflow-hidden"}>
+                    {/* Gambar Produk */}
+                    <Box className="w-16 h-16 rounded-lg mr-4 overflow-hidden">
                         {imageUrl ? (
                             <Image
                                 source={{ uri: imageUrl }}
@@ -59,23 +76,28 @@ export default function Index() {
                                 resizeMode="cover"
                             />
                         ) : (
-                            <Box
-                                className={"w-16 h-16 rounded-lg mr-4 overflow-hidden justify-center items-center p-1"}
-                            >
-                                <Text className={"text-center"}>No Image</Text>
+                            <Box className="w-16 h-16 rounded-lg justify-center items-center bg-gray-200">
+                                <Text className="text-center">No Image</Text>
                             </Box>
                         )}
                     </Box>
 
-                    {/* Details */}
+                    {/* Detail Produk */}
                     <Box className="flex-1">
-                        <Text className="text-lg font-bold">{item.auction.product.productName}</Text>
-                        <Text className="text-gray-500">{AuctionStatus.toLabel(item.auction.auctionStatus)}</Text>
+                        <Text className="text-lg font-bold">
+                            {item.auction.product.productName}
+                        </Text>
+                        <Text className="text-gray-500">
+                            Bid anda {formatRupiah(item.totalBid.toString())}
+                        </Text>
                     </Box>
 
-                    {/* Highest Bid */}
-                    <Box className="text-lg font-bold text-primary-500">
-                        <Text className="text-lg font-bold text-primary-500">
+                    {/* Harga Bid Tertinggi */}
+                    <Box>
+                        <Text className={cn(
+                            item.totalBid >= item.auction.lastPrice ? "text-primary-500" : "text-red-500",
+                            "text-lg font-bold",
+                        )}>
                             {formatRupiah(item.auction.lastPrice.toString())}
                         </Text>
                     </Box>
@@ -85,33 +107,11 @@ export default function Index() {
     };
 
     return (
-        <ScreenLayout className="">
-            {/* Tabs */}
-            <Box className="flex-row mb-4 gap-x-3">
-                {tabs.map((tab) => (
-                    <Pressable
-                        key={tab}
-                        onPress={() => setActiveTab(tab)}
-                        className={`flex-1 py-2 px-4 rounded-lg ${
-                            activeTab === tab ? "bg-primary-500" : "border border-gray-300"
-                        }`}
-                    >
-                        <Text
-                            className={cn(
-                                activeTab === tab ? "text-white" : "text-gray-600",
-                                "text-center",
-                            )}
-                        >
-                            {tab}
-                        </Text>
-                    </Pressable>
-                ))}
-            </Box>
-
-            {/* Auction Items */}
+        <ScreenLayout>
+            {/* FlashList untuk Bid Ongoing */}
             <PullToRefresh onRefresh={onRefresh}>
                 <FlashList
-                    data={myBidAuctions?.data}
+                    data={onGoingBid}
                     renderItem={renderAuctionItem}
                     keyExtractor={(item) => item.auction.id}
                     estimatedItemSize={100}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, TouchableOpacity, TextInput, Text, View, ActivityIndicator } from "react-native";
+import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { Box } from "@/components/ui/box";
 import { MapPin, Search } from "lucide-react-native";
@@ -21,13 +21,19 @@ export default function Index() {
     const router = useRouter();
     const { height } = useResponsive();
 
-    const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
 
     const { data: auctions, isLoading, isFetching, refetch: auctionsRefetch } = useAuctions({ size: 100 });
     const { data: userProfile, isLoading: isUserProfileLoading } = useUserProfile();
     const { data: userAddresses, isLoading: isAddressesLoading } = useAddresses();
 
-    if (isLoading || isUserProfileLoading || isAddressesLoading) return <Loader />;
+    useEffect(() => {
+        if (!isLoading && !isUserProfileLoading && !isAddressesLoading) {
+            setIsInitialLoading(false);
+        }
+    }, [isLoading, isUserProfileLoading, isAddressesLoading]);
+
+    if (isInitialLoading) return <Loader />;
 
     const handleItem = (id: string) => {
         router.push(`/home/${id}`);
@@ -149,11 +155,6 @@ export default function Index() {
                         refreshing={isFetching}
                         contentContainerStyle={{ paddingBottom: 16 }}
                         showsVerticalScrollIndicator={false}
-                        ListFooterComponent={
-                            isFetchingMore ? (
-                                <ActivityIndicator size="small" color="#000" />
-                            ) : null
-                        }
                         ListEmptyComponent={
                             <Box
                                 style={{
@@ -169,6 +170,5 @@ export default function Index() {
                 </PullToRefresh>
             </Box>
         </Box>
-
     );
 }

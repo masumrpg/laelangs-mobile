@@ -1,7 +1,7 @@
 import { useMutation, UseMutationOptions, useQuery, UseQueryOptions, UseQueryResult } from "@tanstack/react-query";
 import { auctionService } from "@/service/auctionService";
 import { AxiosError } from "axios";
-import { Auction, Bid, UserBidSummary } from "@/feature/auction/type";
+import { Auction, Bid, UserBidDetails, UserBidSummary } from "@/feature/auction/type";
 import { CommonResponse, PagingResponse } from "@/shared/schema";
 import { BidMeSchema, BidSchema } from "@/feature/auction/schema";
 
@@ -51,10 +51,10 @@ export const useBidMe = (
     });
 };
 
-export const useMyBidAuctions = (
-    options?: UseQueryOptions<PagingResponse<any[]>, AxiosError>,
-): UseQueryResult<PagingResponse<any[]>, AxiosError> => {
-    return useQuery<PagingResponse<any[]>, AxiosError>({
+export const useGetAllMyBidAuctions = (
+    options?: UseQueryOptions<PagingResponse<UserBidDetails[]>, AxiosError>,
+): UseQueryResult<PagingResponse<UserBidDetails[]>, AxiosError> => {
+    return useQuery<PagingResponse<UserBidDetails[]>, AxiosError>({
         queryKey: ["auctions", "bid", "list"],
         queryFn: async () => {
             return await auctionService.getAllMyAuction();

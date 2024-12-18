@@ -27,8 +27,6 @@ export default function Index() {
     const { data: userProfile, isLoading: isUserProfileLoading } = useUserProfile();
     const { data: userAddresses, isLoading: isAddressesLoading } = useAddresses();
 
-    // if (!auctions?.data) return <Loader />;
-
     if (isLoading || isUserProfileLoading || isAddressesLoading) return <Loader />;
 
     const handleItem = (id: string) => {

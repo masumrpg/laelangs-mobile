@@ -1,5 +1,5 @@
 import httpClient from "@/lib/api";
-import { PagingResponse } from "@/shared/schema";
+import { CommonResponse, PagingResponse } from "@/shared/schema";
 import { Transaction } from "@/feature/transaction/type";
 
 export const transactionService = {
@@ -8,7 +8,11 @@ export const transactionService = {
         return data;
     },
     async getOneById(id: string) {
-        const { data } = await httpClient.get<PagingResponse<Transaction>>(`/transactions/${id}`);
+        const { data } = await httpClient.get<CommonResponse<Transaction>>(`/transactions/${id}`);
+        return data;
+    },
+    async updateTransactionComplete(id: string) {
+        const { data } = await httpClient.put<CommonResponse<string>>(`/transactions/${id}/complete`);
         return data;
     },
 };

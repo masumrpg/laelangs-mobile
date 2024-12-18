@@ -6,5 +6,4 @@ export interface BidSchema {
 
 export interface BidMeSchema {
     bidAmount: number;
-    userId: string;
 }

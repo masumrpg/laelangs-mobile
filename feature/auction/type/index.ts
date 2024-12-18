@@ -47,6 +47,11 @@ export type UserBidSummary = {
     totalBid: number;
 }
 
+export type UserBidDetails = {
+    totalBid: number;
+    auction: Auction;
+}
+
 export type Bid = {
     bid: string;
     paymentId: string;

@@ -41,13 +41,30 @@ export namespace TransactionStatus {
             case TransactionStatus.ON_SHIPMENT:
                 return "Dalam Pengiriman";
             case TransactionStatus.ARRIVED:
-                return "Sudah Diterima";
+                return "Sudah Terkirim ke Pembeli";
             case TransactionStatus.ON_RETURN:
                 return "Sedang Dikembalikan";
             case TransactionStatus.DONE:
                 return "Selesai";
             default:
                 return "Status Tidak Dikenal";
+        }
+    }
+
+    export function toLabelBadge(status: TransactionStatus): "warning" | "info" | "success" | "error" | "muted" {
+        switch (status) {
+            case TransactionStatus.ON_PROCESS:
+                return "warning";
+            case TransactionStatus.ON_SHIPMENT:
+                return "info";
+            case TransactionStatus.ARRIVED:
+                return "success";
+            case TransactionStatus.ON_RETURN:
+                return "error";
+            case TransactionStatus.DONE:
+                return "success";
+            default:
+                return "muted";
         }
     }
 }

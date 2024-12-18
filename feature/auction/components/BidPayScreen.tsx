@@ -68,7 +68,7 @@ export default function BidPayScreen(
             setIsNotReadyToBid(false);
         }
     }, [authData?.userId, availableBid, selectedAddress, selectedCourier, userAddress]);
-    
+
 
     const addBid = () => {
         setAvailableBid((prevState) => prevState + auction.multiply);
@@ -125,7 +125,7 @@ export default function BidPayScreen(
                     </Box>
 
                     {
-                        userBid &&
+                        userBid && (userBid?.totalBid !== null || undefined) &&
                         (
                             <Badge
                                 action={userBid.totalBid < auction.lastPrice ? "error" : "success"}

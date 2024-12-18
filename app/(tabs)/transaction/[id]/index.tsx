@@ -1,25 +1,40 @@
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Image, View } from "react-native";
 import { Box } from "@/components/ui/box";
 import { buildFullURL, formatRupiah } from "@/lib/utils";
 import PullToRefresh from "@/components/PullToRefresh";
 import ScreenLayout from "@/components/ScreenLayout";
-import { useAllTransaction } from "@/feature/transaction/hooks/useTransaction";
+import { useTransaction, useTransactionDone } from "@/feature/transaction/hooks/useTransaction";
 import { useLocalSearchParams } from "expo-router";
 import Loader from "@/components/Loader";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TransactionStatus } from "@/feature/transaction/type";
 import { Button, ButtonText } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
 import { useCities, useProvinces } from "@/feature/config/hooks/useConfig";
+import { useToast } from "@/shared/hooks/useToast";
+import {
+    AlertDialog,
+    AlertDialogBackdrop,
+    AlertDialogBody,
+    AlertDialogContent, AlertDialogFooter,
+    AlertDialogHeader,
+} from "@/components/ui/alert-dialog";
+import { Heading } from "@/components/ui/heading";
 
 export default function Index() {
+    const [showAlertDialog, setShowAlertDialog] = React.useState(false);
     const { id: transactionId } = useLocalSearchParams();
+
+    const { showToast } = useToast();
 
     const {
         data: transactionDetails,
         isLoading: transactionDetailsLoading,
         refetch: transactionDetailsRefetch,
-    } = useAllTransaction(transactionId as string);
+    } = useTransaction(transactionId as string);
+
+    const { mutate: updateTransactionComplete, isPending: updateTransactionCompletePending } = useTransactionDone();
 
     const { data: provinces, isLoading: isLoadingProvince } = useProvinces();
     const { data: cities, isLoading: isLoadingCities } = useCities();
@@ -31,21 +46,40 @@ export default function Index() {
     if (transactionDetailsLoading || !transactionDetails?.data) return <Loader />;
 
     const province = provinces.data.find(
-        // @ts-ignore
-        (prov) => prov.id === transactionDetails.data.userAddress.province,
+        (prov) => prov.id === transactionDetails.data?.userAddress?.province,
     );
 
     const city = cities.data.find(
-        // @ts-ignore
-        (city) => city.id === transactionDetails.data.userAddress.city,
+        (city) => city.id === transactionDetails.data?.userAddress?.city,
     );
 
     const onRefresh = async () => {
         await transactionDetailsRefetch();
     };
 
-    const handleConfirmReceived = () => {
-        console.log("Barang Diterima");
+    const handleClose = () => setShowAlertDialog(false);
+
+    const handleConfirmReceived = async () => {
+        updateTransactionComplete({
+            transactionId: transactionId as string,
+        }, {
+            onSuccess: async () => {
+                showToast({
+                    title: "Success",
+                    type: "success",
+                    message: "Berhasil konfirmasi paket",
+                });
+            },
+            onError: async (error) => {
+                console.error(error);
+                showToast({
+                    title: "Gagal",
+                    type: "error",
+                    message: "Gagal mengnonfirmasi, coba lagi!",
+                });
+            },
+        });
+        handleClose();
     };
 
     return (
@@ -88,11 +122,43 @@ export default function Index() {
                             {TransactionStatus.toLabel(transactionDetails.data.transactionStatus)}
                         </Text>
                     </Box>
-                    {transactionDetails.data.transactionStatus === TransactionStatus.DONE && (
+                    {transactionDetails.data.transactionStatus === TransactionStatus.ARRIVED && (
                         <Box className="mt-4">
-                            <Button onPress={handleConfirmReceived}>
-                                <ButtonText>Konfirmasi Penerimaan</ButtonText>
+                            <Button onPress={() => setShowAlertDialog(true)}>
+                                <ButtonText>Konfirmasi</ButtonText>
                             </Button>
+                            <AlertDialog isOpen={showAlertDialog} onClose={handleClose} size="md">
+                                <AlertDialogBackdrop />
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <Heading className="text-typography-950 font-semibold" size="md">
+                                            Apakah kamu yakin telah menerina paket?
+                                        </Heading>
+                                    </AlertDialogHeader>
+                                    <AlertDialogBody className="mt-3 mb-4">
+                                        <Text size="sm">
+                                            Jika kamu telah menerima paket di tanganmu maka kamu bisa melanjutkan dengan
+                                            klik konfirmasi.
+                                        </Text>
+                                    </AlertDialogBody>
+                                    <AlertDialogFooter>
+                                        <Button
+                                            className={"rounded-full"}
+                                            variant={"outline"}
+                                            onPress={handleClose}
+                                            size="sm"
+                                        >
+                                            <ButtonText>Cancel</ButtonText>
+                                        </Button>
+                                        <Button
+                                            isDisabled={updateTransactionCompletePending}
+                                            className={"rounded-full"}
+                                            size="sm" onPress={handleConfirmReceived}>
+                                            <ButtonText>Konfirmasi</ButtonText>
+                                        </Button>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </Box>
                     )}
                 </Box>

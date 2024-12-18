@@ -16,6 +16,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import { MinusIcon, PlusIcon } from "lucide-react-native";
+import { Divider } from "@/components/ui/divider";
 
 interface BidScreenProps {
     auction: Auction;
@@ -34,6 +35,7 @@ export default function BidDetailScreen({
                                             handleAdditionalBid,
                                             handleRefresh,
                                         }: BidScreenProps) {
+
     const tableAuction = [
         ["Status", AuctionStatus.toLabel(auction.auctionStatus)],
         ["Bidding Start", formatDateToIndonesian(auction.startDate)],
@@ -57,14 +59,14 @@ export default function BidDetailScreen({
                 <Box className="flex-row justify-between mb-4">
                     <Text
                         className="text-primary-500 text-2xl font-bold mt-2">{formatRupiah(auction.lastPrice.toString())}</Text>
-                    {handleInitialBid && (userBid === null || undefined) && (
+                    {handleInitialBid && (userBid?.totalBid === null || undefined) && (
                         <Button onPress={handleInitialBid}>
                             <Text className={"text-white"}>Bid Sekarang</Text>
                         </Button>
                     )}
                 </Box>
 
-                {/* Title Section */}
+                {/* Descriptions Section */}
                 <Accordion variant="unfilled" className="my-3">
                     <AccordionItem value="item-1">
                         <AccordionHeader>
@@ -73,7 +75,35 @@ export default function BidDetailScreen({
                                     return (
                                         <>
                                             <AccordionTitleText>
-                                                Bid Barang Kesukaanmu Sekarang!
+                                                Deskripsi produk
+                                            </AccordionTitleText>
+                                            {isExpanded ? (
+                                                <AccordionIcon as={MinusIcon} />
+                                            ) : (
+                                                <AccordionIcon as={PlusIcon} />
+                                            )}
+                                        </>
+                                    );
+                                }}
+                            </AccordionTrigger>
+                        </AccordionHeader>
+                        <AccordionContent>
+                            <AccordionContentText>
+                                {auction.product.description}
+                            </AccordionContentText>
+                        </AccordionContent>
+                    </AccordionItem>
+                </Accordion>
+                <Divider />
+                <Accordion variant="unfilled" className="my-3">
+                    <AccordionItem value="item-1">
+                        <AccordionHeader>
+                            <AccordionTrigger>
+                                {({ isExpanded }) => {
+                                    return (
+                                        <>
+                                            <AccordionTitleText>
+                                                Bid barang kesukaanmu sekarang!
                                             </AccordionTitleText>
                                             {isExpanded ? (
                                                 <AccordionIcon as={MinusIcon} />
@@ -97,7 +127,7 @@ export default function BidDetailScreen({
 
                 {/* Bidding Status Section */}
                 {
-                    handleAdditionalBid && userBid && (
+                    handleAdditionalBid && userBid && userBid.totalBid !== null && (
                         <Box className={cn(
                             userBid.totalBid < auction.lastPrice ? "border-red-500" : "border-primary-500",
                             "border rounded-md p-2 py-5 mb-4 gap-y-1.5",
@@ -123,9 +153,6 @@ export default function BidDetailScreen({
                                     <Box className="flex-row justify-around mt-2">
                                         <Button onPress={handleAdditionalBid}>
                                             <Text className="text-white font-bold">Tambah</Text>
-                                        </Button>
-                                        <Button variant="outline">
-                                            <Text className="text-primary-500 font-bold">Refund</Text>
                                         </Button>
                                     </Box>
                                 )

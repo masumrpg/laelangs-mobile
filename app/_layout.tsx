@@ -43,6 +43,8 @@ export default function RootLayout() {
                 refetchOnWindowFocus: true,
                 refetchOnMount: true,
                 refetchOnReconnect: true,
+                refetchInterval: 2000,
+                refetchIntervalInBackground: true,
             },
         },
     });

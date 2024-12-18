@@ -18,17 +18,14 @@ export default function Index() {
     const { showToast } = useToast();
     const { logout } = useAuth();
 
-    const { data: userProfile, isLoading: isProfileLoading } = useUserProfile();
-    const { data: userAddresses, isLoading: isAddressesLoading } = useAddresses();
+    const { data: userProfile, isLoading: isProfileLoading, refetch: userProfileRefetch } = useUserProfile();
+    const { data: userAddresses, isLoading: isAddressesLoading, refetch: userAddressRefetch } = useAddresses();
 
     if (isAddressesLoading || isProfileLoading) return <Loader />;
 
     const onRefresh = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, 2000);
-        });
+        await userProfileRefetch();
+        await userAddressRefetch();
     };
 
     const logoutHandle = async () => {

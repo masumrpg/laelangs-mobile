@@ -1,4 +1,4 @@
-import { Auction, Bid, UserBidSummary } from "@/feature/auction/type";
+import { Auction, Bid, UserBidDetails, UserBidSummary } from "@/feature/auction/type";
 import httpClient from "@/lib/api";
 import { CommonResponse, PagingResponse } from "@/shared/schema";
 import { BidMeSchema, BidSchema } from "@/feature/auction/schema";
@@ -18,7 +18,7 @@ export const auctionService = {
         return data;
     },
     async getAllMyAuction() {
-        const { data } = await httpClient.get<PagingResponse<any[]>>("/auctions/bid/me");
+        const { data } = await httpClient.get<PagingResponse<UserBidDetails[]>>("/auctions/bid/me");
         return data;
     },
     async getOne(id: string) {

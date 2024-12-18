@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Image, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
@@ -75,7 +75,7 @@ export default function Index() {
                                 className="rounded-sm"
                                 size="md"
                                 variant="solid"
-                                action={item.transactionStatus === "DONE" ? "success" : "info"}
+                                action={TransactionStatus.toLabelBadge(item.transactionStatus)}
                             >
                                 <BadgeText>{TransactionStatus.toLabel(item.transactionStatus)}</BadgeText>
                             </Badge>

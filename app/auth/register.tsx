@@ -67,7 +67,7 @@ export default function Register() {
             showToast({
                 type: "error",
                 title: "Error",
-                message: "Register failed. Please try again!",
+                message: "Username atau Email sudah ada!",
             });
         }
     };

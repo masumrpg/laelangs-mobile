@@ -1,28 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, Pressable, TouchableOpacity } from "react-native";
 import { Text } from "@/components/ui/text";
 import { Box } from "@/components/ui/box";
 import { Card } from "@/components/ui/card";
-import { Search } from "lucide-react-native";
 import { buildFullURL, cn, formatRupiah } from "@/lib/utils";
 import { FlashList } from "@shopify/flash-list";
-import { useAuctions, useBidMe } from "@/feature/auction/hooks/useAuctions";
+import { useGetAllMyBidAuctions } from "@/feature/auction/hooks/useAuctions";
 import Loader from "@/components/Loader";
-import { Auction } from "@/feature/auction/type";
+import { AuctionStatus, UserBidDetails } from "@/feature/auction/type";
 import { useRouter } from "expo-router";
 import ScreenLayout from "@/components/ScreenLayout";
 import PullToRefresh from "@/components/PullToRefresh";
-import { auctionService } from "@/service/auctionService";
 
 export default function Index() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState("Menang");
     const tabs = ["Menang", "Kalah"];
 
-    const { data: auctions, isLoading } = useAuctions();
-    if (isLoading || !auctions?.data) return <Loader />;
+    const { data: myBidAuctions, isLoading: isMyBidAuctions, refetch: myBidRefetch } = useGetAllMyBidAuctions();
 
-    const filteredAuctions = auctions.data.filter(auction => {
+    if (isMyBidAuctions) return <Loader />;
+
+    const filteredAuctions = myBidAuctions?.data?.filter(myBidAuction => {
         if (activeTab === "Menang") {
             // return auction.auctionStatus === "Menang";
             return "Menang";
@@ -32,20 +31,23 @@ export default function Index() {
         }
     });
 
-
     const handleBid = (id: string) => {
         router.push(`/cart/${id}`);
     };
 
-    const renderAuctionItem = ({ item }: { item: Auction }) => {
-        const imageUrl = item.product.images?.[0]?.url
-            ? buildFullURL(item.product.images[0].url)
+    const onRefresh = async () => {
+        await myBidRefetch();
+    };
+
+    const renderAuctionItem = ({ item }: { item: UserBidDetails }) => {
+        const imageUrl = item.auction.product.images?.[0]?.url
+            ? buildFullURL(item.auction.product.images[0].url)
             : null;
 
         return (
-            <TouchableOpacity onPress={() => handleBid(item.id)}>
+            <TouchableOpacity onPress={() => handleBid(item.auction.id)}>
                 <Card
-                    key={item.id}
+                    key={item.auction.id}
                     className="flex-row items-center mb-4 p-4 border border-gray-300 rounded-lg"
                 >
                     {/* Image */}
@@ -67,27 +69,19 @@ export default function Index() {
 
                     {/* Details */}
                     <Box className="flex-1">
-                        <Text className="text-lg font-bold">{item.product.productName}</Text>
-                        <Text className="text-gray-500">{item.auctionStatus}</Text>
+                        <Text className="text-lg font-bold">{item.auction.product.productName}</Text>
+                        <Text className="text-gray-500">{AuctionStatus.toLabel(item.auction.auctionStatus)}</Text>
                     </Box>
 
                     {/* Highest Bid */}
                     <Box className="text-lg font-bold text-primary-500">
                         <Text className="text-lg font-bold text-primary-500">
-                            {formatRupiah(item.lastPrice.toString())}
+                            {formatRupiah(item.auction.lastPrice.toString())}
                         </Text>
                     </Box>
                 </Card>
             </TouchableOpacity>
         );
-    };
-
-    const onRefresh = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(true);
-            }, 2000);
-        });
     };
 
     return (
@@ -117,9 +111,9 @@ export default function Index() {
             {/* Auction Items */}
             <PullToRefresh onRefresh={onRefresh}>
                 <FlashList
-                    data={filteredAuctions}
+                    data={myBidAuctions?.data}
                     renderItem={renderAuctionItem}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.auction.id}
                     estimatedItemSize={100}
                     contentContainerStyle={{ paddingBottom: 16 }}
                     ListEmptyComponent={() => (

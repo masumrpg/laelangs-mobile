@@ -3,7 +3,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import Loader from "@/components/Loader";
 import BidDetailScreen from "@/feature/auction/components/BidDetailScreen";
 import { useAuction, useBidMe } from "@/feature/auction/hooks/useAuctions";
-import { useAddresses } from "@/feature/profile/hooks/useProfiles";
 
 export default function Index() {
     const { id: auctionIdParam } = useLocalSearchParams();

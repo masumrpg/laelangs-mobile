@@ -5,19 +5,12 @@ import BidPayScreen from "@/feature/auction/components/BidPayScreen";
 import { useAuction, useBidMe, useCreateBid, useCreateBidMe } from "@/feature/auction/hooks/useAuctions";
 import { useAddresses, useUserProfile } from "@/feature/profile/hooks/useProfiles";
 import { BidSchema } from "@/feature/auction/schema";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { useQueryClient } from "@tanstack/react-query";
-import { CommonResponse } from "@/shared/schema";
 import { Bid } from "@/feature/auction/type";
-import { useAuth } from "@/shared/contex/AuthContex";
 import { getStorageData, setStorageData } from "@/lib/asyncStorageUtils";
 
 export default function Index() {
     const router = useRouter();
     const { id: auctionIdParam } = useLocalSearchParams();
-
-    const { authData } = useAuth();
 
     const { data: auction, isLoading } = useAuction(auctionIdParam as string);
     const { data: myBid, isLoading: isBidLoading, refetch: myBidRefetch } = useBidMe(auctionIdParam as string);
@@ -48,7 +41,7 @@ export default function Index() {
     }, [router, userProfile?.data]);
 
     if (isRedirecting || isAddressesLoading || isBidLoading || isLoading) return <Loader />;
-    if (!auction?.data || !authData?.userId) return <Loader />;
+    if (!auction?.data) return <Loader />;
 
     const onRefresh = async () => {
         await myBidRefetch();
@@ -66,6 +59,7 @@ export default function Index() {
                     alert("Berhasil melakukan bid");
                 },
                 onError: (error) => {
+                    console.log(error);
                     alert("Gagal melakukan bid");
                 },
             });
@@ -73,8 +67,10 @@ export default function Index() {
             const { bidAmount } = data;
             const scondBidData = {
                 bidAmount: bidAmount - myBid?.data?.totalBid,
-                userId: authData?.userId,
             };
+
+            console.log("bid amout", bidAmount);
+            console.log("total bid", myBid?.data?.totalBid);
 
             mutateSecondBid({ auctionId: auctionIdParam as string, payload: scondBidData }, {
                 onSuccess: async (result) => {

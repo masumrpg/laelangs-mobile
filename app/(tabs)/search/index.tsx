@@ -27,7 +27,7 @@ export default function Index() {
     });
     const [filteredAuctions, setFilteredAuctions] = useState<Auction[]>([]);
 
-    const { data: auctions, isLoading: isAuctionLoading, refetch } = useAuctions();
+    const { data: auctions, isLoading: isAuctionLoading, refetch } = useAuctions({ size: 100 });
 
     useEffect(() => {
         if (auctions?.data) {

@@ -13,6 +13,7 @@ import LogoutDialog from "@/feature/profile/components/LogoutDialog";
 import { Divider } from "@/components/ui/divider";
 import AddressForm from "@/feature/profile/components/AddressForm";
 import ProfileForm from "@/feature/profile/components/ProfileForm";
+import { deleteAllStorageData } from "@/lib/asyncStorageUtils";
 
 export default function Index() {
     const { showToast } = useToast();
@@ -21,7 +22,7 @@ export default function Index() {
     const { data: userProfile, isLoading: isProfileLoading, refetch: userProfileRefetch } = useUserProfile();
     const { data: userAddresses, isLoading: isAddressesLoading, refetch: userAddressRefetch } = useAddresses();
 
-    if (isAddressesLoading || isProfileLoading) return <Loader />;
+    // if (isAddressesLoading || isProfileLoading) return <Loader />;
 
     const onRefresh = async () => {
         await userProfileRefetch();
@@ -37,6 +38,7 @@ export default function Index() {
                 message: "Suksess logout.",
             });
             await logout();
+            await deleteAllStorageData();
         }
     };
 

@@ -28,6 +28,29 @@ export const useAuctions = (
     });
 };
 
+export const useSearchAuctions = (
+    params?: {
+        q?: string;
+        page?: number;
+        size?: number;
+        sortBy?: string;
+        minPrice?: number;
+        maxPrice?: number;
+        category?: string;
+        dueDate?: string;
+    },
+    options?: UseQueryOptions<PagingResponse<Auction[]>, AxiosError>,
+): UseQueryResult<PagingResponse<Auction[]>, AxiosError> => {
+    return useQuery<PagingResponse<Auction[]>, AxiosError>({
+        queryKey: ["auctions", "search", params],
+        queryFn: async () => {
+            return await auctionService.searchAll(params);
+        },
+        staleTime: 500,
+        ...options,
+    });
+};
+
 
 export const useAuction = (
     id: string,

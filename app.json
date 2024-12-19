@@ -31,6 +31,19 @@
     "plugins": [
       "expo-router",
       [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 21,
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "manifestApplication": {
+              "usesCleartextTraffic": true
+            }
+          }
+        }
+      ],
+      [
         "expo-secure-store",
         {
           "configureAndroidBackup": true,
@@ -48,7 +61,8 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

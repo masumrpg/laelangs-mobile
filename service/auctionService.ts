@@ -17,6 +17,19 @@ export const auctionService = {
         const { data } = await httpClient.get<PagingResponse<Auction[]>>("/auctions", { params });
         return data;
     },
+    async searchAll(params?: {
+        page?: number;
+        size?: number;
+        sortBy?: string;
+        q?: string;
+        minPrice?: number;
+        maxPrice?: number;
+        category?: string;
+        dueDate?: string;
+    }) {
+        const { data } = await httpClient.get<PagingResponse<Auction[]>>("/auctions", { params });
+        return data;
+    },
     async getAllMyAuction() {
         const { data } = await httpClient.get<PagingResponse<UserBidDetails[]>>("/auctions/bid/me");
         return data;

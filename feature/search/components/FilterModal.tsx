@@ -2,6 +2,7 @@ import React from "react";
 import { Modal, StyleSheet, Text, TextInput, View } from "react-native";
 import { Box } from "@/components/ui/box";
 import { Button } from "@/components/ui/button";
+import { formatRupiah } from "@/lib/utils";
 
 export default function FilterModal({
                                         visible,
@@ -11,13 +12,12 @@ export default function FilterModal({
                                         onClose,
                                     }: {
     visible: boolean;
-    filters: { minPrice: string; maxPrice: string; category: string };
+    filters: { q: string; minPrice: string; maxPrice: string; };
     setFilters: React.Dispatch<
         React.SetStateAction<{
             q: string;
             minPrice: string;
             maxPrice: string;
-            category: string;
         }>
     >;
     onApply: () => void;
@@ -33,7 +33,7 @@ export default function FilterModal({
                     <TextInput
                         placeholder="Min Price"
                         keyboardType="numeric"
-                        value={filters.minPrice}
+                        value={formatRupiah(filters.minPrice)}
                         onChangeText={(text) =>
                             setFilters((prev) => ({ ...prev, minPrice: text }))
                         }
@@ -45,14 +45,6 @@ export default function FilterModal({
                         value={filters.maxPrice}
                         onChangeText={(text) =>
                             setFilters((prev) => ({ ...prev, maxPrice: text }))
-                        }
-                        className="border border-gray-300 rounded-lg p-3 mb-4"
-                    />
-                    <TextInput
-                        placeholder="Category"
-                        value={filters.category}
-                        onChangeText={(text) =>
-                            setFilters((prev) => ({ ...prev, category: text }))
                         }
                         className="border border-gray-300 rounded-lg p-3 mb-4"
                     />

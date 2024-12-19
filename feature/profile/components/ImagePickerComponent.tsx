@@ -46,7 +46,7 @@ const ImagePickerComponent: React.FC<ImagePickerComponentProps> = ({
 
                 setImageFile(image);
             } else {
-                console.error("Image URI or MIME type is undefined or null.");
+                console.log("Image URI or MIME type is undefined or null.");
             }
         }
     };

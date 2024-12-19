@@ -71,7 +71,7 @@ export default function Index() {
                 });
             },
             onError: async (error) => {
-                console.error(error);
+                console.log(error);
                 showToast({
                     title: "Gagal",
                     type: "error",

@@ -14,7 +14,7 @@ export const useRefreshToken = () => {
                 return response;
             }
         } catch (error) {
-            console.error(error);
+            console.log(error);
             await logout();
             router.replace("/auth/login");
         }

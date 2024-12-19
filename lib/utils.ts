@@ -51,7 +51,7 @@ export const useClearStorage = () => {
                 await removeAuthData();
                 console.log("Semua data berhasil dihapus dari Secure Store");
             } catch (error) {
-                console.error("Gagal menghapus data dari Secure Store:", error);
+                console.log("Gagal menghapus data dari Secure Store:", error);
             }
         }
 

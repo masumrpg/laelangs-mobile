@@ -80,7 +80,7 @@ const LocalAuthBiometric: React.FC<{
                 title: "Error",
                 message: "Internal Server Error!",
             });
-            console.error(error);
+            console.log(error);
         }
     };
 

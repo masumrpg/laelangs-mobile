@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { TextInput, Pressable, Text, Image } from "react-native";
+import { Image, Pressable, Text, TextInput } from "react-native";
 import { Box } from "@/components/ui/box";
 import ScreenLayout from "@/components/ScreenLayout";
 import PullToRefresh from "@/components/PullToRefresh";
 import { Filter } from "lucide-react-native";
 import { FlashList } from "@shopify/flash-list";
-import { useAuctions, useSearchAuctions } from "@/feature/auction/hooks/useAuctions";
+import { useAuctions } from "@/feature/auction/hooks/useAuctions";
 import { Auction } from "@/feature/auction/type";
 import Loader from "@/components/Loader";
 import { buildFullURL, formatDateToIndonesian, formatRupiah, parseRupiah } from "@/lib/utils";
@@ -25,16 +25,24 @@ export default function Index() {
         minPrice: "",
         maxPrice: "",
     });
+    const [filteredAuctions, setFilteredAuctions] = useState<Auction[]>([]);
 
-    const { data: auctions, isLoading: isAuctionLoading, refetch } = useSearchAuctions({
-        q: filters.q ?? undefined,
-        minPrice: filters.minPrice ? parseRupiah(filters.minPrice) : undefined,
-        maxPrice: filters.maxPrice ? parseRupiah(filters.maxPrice) : undefined,
-    });
+    const { data: auctions, isLoading: isAuctionLoading, refetch } = useAuctions();
 
     useEffect(() => {
-        console.log(auctions);
-    }, [auctions]);
+        if (auctions?.data) {
+            const filtered = auctions.data.filter((auction) => {
+                return (filters.q ? auction.product.productName.includes(filters.q) : true) &&
+                    (filters.minPrice
+                        ? auction.lastPrice >= parseRupiah(filters.minPrice)
+                        : true) &&
+                    (filters.maxPrice
+                        ? auction.lastPrice <= parseRupiah(filters.maxPrice)
+                        : true);
+            });
+            setFilteredAuctions(filtered);
+        }
+    }, [auctions, filters]);
 
     const onRefresh = async () => {
         await refetch();
@@ -84,18 +92,18 @@ export default function Index() {
     return (
         <ScreenLayout>
             <PullToRefresh onRefresh={onRefresh}>
-                <Box className="flex-row items-center mb-4 gap-x-2">
+                <Box className="flex-row items-center mb-6 gap-x-4">
                     <TextInput
-                        className="flex-1 border border-gray-300 rounded-lg p-3"
-                        placeholder="Cari"
+                        className="flex-1 border border-gray-300 rounded-lg p-4 text-lg"
+                        placeholder="Cari produk"
                         value={filters.q}
                         onChangeText={(text) => setFilters((prev) => ({ ...prev, q: text }))}
                     />
                     <Pressable onPress={async () => {
                         setFilterVisible(true);
                         await queryClient.invalidateQueries({ queryKey: ["auctions", filters.q] });
-                    }} className="p-3 rounded-lg border border-gray-300">
-                        <Filter size={18} color="black" />
+                    }} className="p-4 rounded-lg border border-gray-300">
+                        <Filter size={20} color="black" />
                     </Pressable>
                 </Box>
 
@@ -117,7 +125,7 @@ export default function Index() {
                     <Loader />
                 ) : (
                     <FlashList
-                        data={auctions?.data}
+                        data={filteredAuctions}
                         renderItem={renderItem}
                         keyExtractor={(item) => item.id}
                         refreshing={isAuctionLoading}

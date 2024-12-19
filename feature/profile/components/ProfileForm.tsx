@@ -87,7 +87,7 @@ export default function ProfileForm({ logoutHandle }: { logoutHandle: () => void
                 },
             });
         } catch (error) {
-            console.error("Failed to submit data:", error);
+            console.log("Failed to submit data:", error);
         } finally {
             setIsSubmitting(false);
         }

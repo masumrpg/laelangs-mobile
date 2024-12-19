@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Text } from "react-native";
+import { Image, Linking, Text } from "react-native";
 import { Box } from "@/components/ui/box";
 import ScreenLayout from "@/components/ScreenLayout";
 import PullToRefresh from "@/components/PullToRefresh";
@@ -14,6 +14,7 @@ import { Divider } from "@/components/ui/divider";
 import AddressForm from "@/feature/profile/components/AddressForm";
 import ProfileForm from "@/feature/profile/components/ProfileForm";
 import { deleteAllStorageData } from "@/lib/asyncStorageUtils";
+import { Button, ButtonText } from "@/components/ui/button";
 
 export default function Index() {
     const { showToast } = useToast();
@@ -40,6 +41,10 @@ export default function Index() {
             await logout();
             await deleteAllStorageData();
         }
+    };
+
+    const handlePress = () => {
+        Linking.openURL("http://134.209.96.19/login");
     };
 
 
@@ -82,13 +87,28 @@ export default function Index() {
                     <Box className="bg-gray-100 rounded-lg p-4 border border-gray-300 mb-4">
                         <Box className="flex flex-row justify-between items-center">
                             <Box className="flex-1">
-                                <Text className="text-gray-600 font-bold mb-1">Address</Text>
+                                <Text className="text-gray-600 font-bold mb-1">Alamat</Text>
                                 <Text
                                     className="text-gray-600">
                                     {userAddresses?.data?.[0]?.address ?? "Belum ada alamat"}
                                 </Text>
                             </Box>
                             <AddressForm buttonText={userAddresses?.data ? "Tambah" : "Lihat"} />
+                        </Box>
+                    </Box>
+
+                    <Box className="bg-gray-100 rounded-lg p-4 border border-gray-300 mb-4">
+                        <Box className="flex flex-row justify-between items-center">
+                            <Box className="flex-1">
+                                <Text className="text-gray-600 font-bold mb-1">Daftar Sebagai Merchant</Text>
+                                <Text
+                                    className="text-gray-600">
+                                    Daftar atau login sebagai merchant
+                                </Text>
+                            </Box>
+                            <Button variant={"outline"} size={"xs"} className={"rounded-full"} onPress={handlePress}>
+                                <ButtonText>Kunjungi</ButtonText>
+                            </Button>
                         </Box>
                     </Box>
 

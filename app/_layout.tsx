@@ -1,59 +1,96 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import "@/global.css";
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import { useFonts } from "expo-font";
+import { Stack, useRouter } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 
-import { useColorScheme } from '@/components/useColorScheme';
+import { AuthProvider } from "@/shared/contex/AuthContex";
+import { StatusBar } from "expo-status-bar";
+import { ThemeProviderRoot, useTheme } from "@/components/ui/theme-provider/ThemeProviderRoot";
+import { ThemeProvider } from "@react-navigation/core";
+import { DarkTheme, DefaultTheme } from "@react-navigation/native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
+import addAuthInterceptor from "@/shared/middleware/authMiddleware";
+import Toast from "react-native-toast-message";
+import { useClearStorage } from "@/lib/utils";
+
 
 export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+    ErrorBoundary,
+} from "expo-router";
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
+configureReanimatedLogger({
+    level: ReanimatedLogLevel.warn,
+    strict: false,
+});
+
+
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
+    const router = useRouter();
+    const [loaded, error] = useFonts({
+        SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+        ...FontAwesome.font,
+    });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                refetchOnWindowFocus: true,
+                refetchOnMount: true,
+                refetchOnReconnect: true,
+                refetchInterval: 2000,
+                refetchIntervalInBackground: true,
+            },
+        },
+    });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+
+    addAuthInterceptor(router);
+
+
+    useEffect(() => {
+        if (error) throw error;
+    }, [error]);
+
+    useEffect(() => {
+        if (loaded) {
+            SplashScreen.hideAsync();
+        }
+    }, [loaded]);
+
+    if (!loaded) {
+        return null;
     }
-  }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
-
-  return <RootLayoutNav />;
+    return (
+        <GluestackUIProvider mode="light">
+            <ThemeProviderRoot>
+                <QueryClientProvider client={queryClient}>
+                    <AuthProvider>
+                        <RootLayoutContent />
+                    </AuthProvider>
+                </QueryClientProvider>
+            </ThemeProviderRoot>
+        </GluestackUIProvider>
+    );
 }
 
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+function RootLayoutContent() {
+    const { theme } = useTheme();
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
-  );
+    // FIXME clear storage
+    // useClearStorage();
+
+    return (
+        <ThemeProvider value={theme === "dark" ? DarkTheme : DefaultTheme}>
+            <StatusBar style={theme === "light" ? "dark" : "light"} />
+            <Stack screenOptions={{ headerShown: false }} />
+            <Toast />
+        </ThemeProvider>
+    );
 }
